@@ -5,4 +5,4 @@ yarn-error.log
 .env
 /vendor
 .DS_Store
-include/secrets.php
+includes/secrets.php
