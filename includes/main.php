@@ -35,6 +35,12 @@ add_action('wp_enqueue_scripts', function () {
     wp_register_script('blocks/text', assets_url('/dist/blocks/text.js'), ['jquery'], null, true);
 });
 
+add_filter( 'query_vars', 'mmmush_query_vars' );
+function mmmush_query_vars( $query_vars ){
+    $query_vars[] = 'AssistantId';
+    return $query_vars;
+}
+
 /**
  * Disable Gutenberg for specific post types
  */
@@ -61,3 +67,11 @@ function pd($array) {
     pr($array);
     die();
 }   
+
+add_action('template_redirect', function() {
+    // Check if the current page is the one with ID 134
+    if (is_page(134) && empty(get_query_var('AssistantId'))) {
+        wp_redirect(get_the_permalink(5));
+        exit;
+    }
+});

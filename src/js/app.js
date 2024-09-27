@@ -1,6 +1,7 @@
-import $ from 'jquery'
-import HelloWorld from '@/hello-world'
+import SingleThread from '@/single-thread'
 
 (function ($) {
-  new HelloWorld()
+  if (document.querySelector('.single-thread')) {
+    new SingleThread()
+  }
 })($)

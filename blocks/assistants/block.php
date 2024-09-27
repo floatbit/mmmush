@@ -24,12 +24,31 @@ if ( ! empty( $block['className'] ) ) {
 if ( ! empty( $block['align'] ) ) {
     $classes .= ' align' . $block['align'];
 }
+
+$client = OpenAI::client(CHATGPT_API_KEY);
+
+$response = $client->assistants()->list([
+    'limit' => 50,
+]);
+
 ?>
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
-    <div class="container">
-        <h2 class="pt-[100px] pb-[100px]">
-            TODO: blocks/assistants
+    <div class="container prose">
+        <h2 class="pt-[100px] pb-[50px]">
+            Who to Chat With?
         </h2>
+        <?php foreach ($response->data as $assistant) : ?>
+            <div class="assistant">
+                <h3>
+                    <a href="/assistants/retrieve?AssistantId=<?php echo $assistant->id; ?>"><?php echo $assistant->name; ?></a>
+                </h3>
+                <p><?php echo $assistant->instructions; ?></p>
+                <p>
+                    <a href="/threads/start?AssistantId=<?php echo $assistant->id; ?>">Start Chat &#8594;</a>
+                </p>
+            </div>
+            <hr class="my-10">
+        <?php endforeach; ?>
     </div>
 </div>

@@ -148,4 +148,11 @@ add_action('wp_trash_post', function($post_id) {
             $client->files()->delete($file_id);
         }
     }
+
+    if ($post->post_type === 'thread') {
+        $thread_id = get_field('thread_id', $post_id);
+        $client = OpenAI::client(CHATGPT_API_KEY);
+        $response = $client->threads()->delete($thread_id);
+    }
+    
 });

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/threads-start",
+  "title": "Threads Start",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["threads-start"],
+  "_viewScript": ["blocks/threads-start"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

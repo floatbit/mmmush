@@ -8,6 +8,10 @@ define('CUSTOM_BLOCKS', [
         'assistants-retrieve',
         'files',
         'files-list',
+        'threads',
+        'threads-list',
+        'threads-start',
+        'chat',
     ],
     'post' => [
         'text',
