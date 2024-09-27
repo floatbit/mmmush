@@ -194,7 +194,7 @@ function handle_send_message() {
     // Poll for run completion and stream the results
     while (true) {
         $run = $client->threads()->runs()->retrieve($thread_id, $run->id);
-
+        mmmush_debug($run);
         if ($run->status === 'completed') {
             // Retrieve and send the assistant's response
             $messages = $client->threads()->messages()->list($thread_id);
@@ -204,6 +204,7 @@ function handle_send_message() {
                         'event' => 'message',
                         'message' => $msg->content[0]->text->value,
                     ]);
+                    mmmush_debug($eventData);
                     echo "data: {$eventData}\n\n";
                     flush();
                     break; // Only send the latest assistant message
@@ -215,6 +216,7 @@ function handle_send_message() {
                 'event' => 'error',
                 'message' => 'Run failed: ' . $run->status,
             ]);
+            mmmush_debug($eventData);
             echo "data: {$eventData}\n\n";
             flush();
             break;
