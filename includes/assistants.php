@@ -151,8 +151,53 @@ add_action('wp_trash_post', function($post_id) {
 
     if ($post->post_type === 'thread') {
         $thread_id = get_field('thread_id', $post_id);
-        $client = OpenAI::client(CHATGPT_API_KEY);
-        $response = $client->threads()->delete($thread_id);
+        if ($thread_id) {
+            $client = OpenAI::client(CHATGPT_API_KEY);
+            $response = $client->threads()->delete($thread_id);
+        }
     }
-    
 });
+
+// Add this at the end of the file
+
+add_action('wp_ajax_send_message', 'handle_send_message');
+add_action('wp_ajax_nopriv_send_message', 'handle_send_message');
+
+function handle_send_message() {
+    $thread_id = $_POST['thread_id'];
+    $assistant_id = $_POST['assistant_id'];
+    $message = $_POST['message'];
+
+    $client = OpenAI::client(CHATGPT_API_KEY);
+
+    try {
+        // Add the user's message to the thread
+        $client->threads()->messages()->create($thread_id, [
+            'role' => 'user',
+            'content' => $message,
+        ]);
+
+        // Run the assistant
+        $run = $client->threads()->runs()->create($thread_id, [
+            'assistant_id' => $assistant_id,
+        ]);
+
+        // Wait for the run to complete
+        do {
+            $run_status = $client->threads()->runs()->retrieve($thread_id, $run->id);
+            usleep(1000000); // Wait for 1 second before checking again
+        } while ($run_status->status !== 'completed');
+
+        // Retrieve the assistant's response
+        $messages = $client->threads()->messages()->list($thread_id);
+        $last_message = $messages->data[0];
+
+        wp_send_json_success([
+            'content' => $last_message->content[0]->text->value,
+        ]);
+    } catch (Exception $e) {
+        wp_send_json_error(['error' => $e->getMessage()]);
+    }
+
+    wp_die();
+}

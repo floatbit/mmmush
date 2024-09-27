@@ -15,7 +15,7 @@ $response = $client->assistants()->retrieve($assistant_id);
     <h1><?php echo $response->name; ?></h1>
     <div class="flex gap-[20px]">
         <div class="basis-4/12">
-            <form action="" class="max-w-[500px]">
+            <form id="chat-form" action="" class="max-w-[500px]">
                 <div>
                     <textarea name="message" placeholder="Message" class="h-[200px] w-full"></textarea>
                 </div>
@@ -25,8 +25,8 @@ $response = $client->assistants()->retrieve($assistant_id);
             </form>
         </div>
         <div class="basis-6/12">
-            <div class="messages border border-gray-300 rounded-[10px] p-[20px]">
-                <p>fff</p>
+            <div id="chat-messages" class="messages border border-gray-300 rounded-[10px] p-[20px]">
+                <!-- Messages will be added here -->
             </div>
         </div>
     </div>
