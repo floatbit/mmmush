@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/assistants-retrieve",
+  "title": "Assistants Retrieve",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["assistants-retrieve"],
+  "_viewScript": ["blocks/assistants-retrieve"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

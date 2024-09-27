@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/files",
+  "title": "Files",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["files"],
+  "_viewScript": ["blocks/files"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'fonts';
+@import 'typography';
+@import 'blocks/index';
+
+body {
+  @apply font-sans antialiased prose prose-base max-w-none selection:bg-sky-300 selection:text-sky-600
+}
+
+body .is-root-container {
+  @apply font-sans antialiased prose prose-base max-w-none;
+}
+
+.wp-block-post-title {
+  @apply mb-10;
+}
+
+/* Main column width */
+.wp-block {
+  max-width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Width of "wide" blocks */
+.wp-block[data-align="wide"] { max-width: 100%; }
+
+/* Width of "full-width" blocks */
+.wp-block[data-align="full"] { max-width: none; }

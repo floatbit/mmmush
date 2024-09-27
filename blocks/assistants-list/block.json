@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/assistants-list",
+  "title": "Assistants List",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["assistants-list"],
+  "_viewScript": ["blocks/assistants-list"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

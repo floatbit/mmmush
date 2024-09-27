@@ -1,0 +1,12 @@
+{
+  "name": "acf/text",
+  "title": "Text",
+  "description": "",
+  "category": "sinargroup",
+  "keywords": ["job", "listing"],
+  "viewScript": ["blocks/text"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}
