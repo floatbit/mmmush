@@ -1,6 +1,7 @@
 <?php
-$thread_id = get_the_ID();
-$assistant_id = get_field('assistant_id', $thread_id);
+
+$thread_id = get_field('thread_id', $post->ID);
+$assistant_id = get_field('assistant_id', $post->ID);
 
 // assistant information
 $client = OpenAI::client(CHATGPT_API_KEY);
@@ -18,6 +19,8 @@ $response = $client->assistants()->retrieve($assistant_id);
                 <div>
                     <textarea name="message" placeholder="Message" class="h-[200px] w-full"></textarea>
                 </div>
+                <input type="hidden" name="ThreadId" value="<?php echo $thread_id; ?>">
+                <input type="hidden" name="AssistantId" value="<?php echo $assistant_id; ?>">
                 <button type="submit" class="btn btn-primary">Send</button>
             </form>
         </div>
