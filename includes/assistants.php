@@ -158,46 +158,72 @@ add_action('wp_trash_post', function($post_id) {
     }
 });
 
-// Add this at the end of the file
-
 add_action('wp_ajax_send_message', 'handle_send_message');
 add_action('wp_ajax_nopriv_send_message', 'handle_send_message');
 
 function handle_send_message() {
-    $thread_id = $_POST['thread_id'];
-    $assistant_id = $_POST['assistant_id'];
-    $message = $_POST['message'];
-
-    $client = OpenAI::client(CHATGPT_API_KEY);
-
-    try {
-        // Add the user's message to the thread
-        $client->threads()->messages()->create($thread_id, [
-            'role' => 'user',
-            'content' => $message,
-        ]);
-
-        // Run the assistant
-        $run = $client->threads()->runs()->create($thread_id, [
-            'assistant_id' => $assistant_id,
-        ]);
-
-        // Wait for the run to complete
-        do {
-            $run_status = $client->threads()->runs()->retrieve($thread_id, $run->id);
-            usleep(1000000); // Wait for 1 second before checking again
-        } while ($run_status->status !== 'completed');
-
-        // Retrieve the assistant's response
-        $messages = $client->threads()->messages()->list($thread_id);
-        $last_message = $messages->data[0];
-
-        wp_send_json_success([
-            'content' => $last_message->content[0]->text->value,
-        ]);
-    } catch (Exception $e) {
-        wp_send_json_error(['error' => $e->getMessage()]);
+    // Ensure output buffering is turned off
+    if (ob_get_length()) {
+        ob_end_clean();
     }
 
-    wp_die();
+    // Set headers for Server-Sent Events
+    header('Content-Type: text/event-stream');
+    header('Cache-Control: no-cache');
+    header('Connection: keep-alive');
+
+    // Get the POST data
+    $thread_id = $_POST['ThreadId'];
+    $assistant_id = $_POST['AssistantId'];
+    $message = $_POST['message'];
+
+    // Create OpenAI client
+    $client = OpenAI::client(CHATGPT_API_KEY);
+
+    // Create a message in the thread
+    $client->threads()->messages()->create($thread_id, [
+        'role' => 'user',
+        'content' => $message,
+    ]);
+
+    // Create and start a run
+    $run = $client->threads()->runs()->create($thread_id, [
+        'assistant_id' => $assistant_id,
+    ]);
+
+    // Poll for run completion and stream the results
+    while (true) {
+        $run = $client->threads()->runs()->retrieve($thread_id, $run->id);
+
+        if ($run->status === 'completed') {
+            // Retrieve and send the assistant's response
+            $messages = $client->threads()->messages()->list($thread_id);
+            foreach ($messages->data as $msg) {
+                if ($msg->role === 'assistant') {
+                    $eventData = json_encode([
+                        'event' => 'message',
+                        'message' => $msg->content[0]->text->value,
+                    ]);
+                    echo "data: {$eventData}\n\n";
+                    flush();
+                    break; // Only send the latest assistant message
+                }
+            }
+            break;
+        } elseif (in_array($run->status, ['failed', 'cancelled', 'expired'])) {
+            $eventData = json_encode([
+                'event' => 'error',
+                'message' => 'Run failed: ' . $run->status,
+            ]);
+            echo "data: {$eventData}\n\n";
+            flush();
+            break;
+        }
+
+        // Wait before polling again
+        sleep(1);
+    }
+
+    // End the connection when streaming is done
+    exit;
 }

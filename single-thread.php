@@ -17,7 +17,7 @@ $response = $client->assistants()->retrieve($assistant_id);
         <div class="basis-4/12">
             <form id="chat-form" action="" class="max-w-[500px]">
                 <div>
-                    <textarea name="message" placeholder="Message" class="h-[200px] w-full"></textarea>
+                    <textarea id="message-input" name="message" placeholder="Message" class="h-[200px] w-full"></textarea>
                 </div>
                 <input type="hidden" name="ThreadId" value="<?php echo $thread_id; ?>">
                 <input type="hidden" name="AssistantId" value="<?php echo $assistant_id; ?>">
