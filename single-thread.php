@@ -13,19 +13,22 @@ $response = $client->assistants()->retrieve($assistant_id);
 
 <div class="container prose my-[100px]"> 
     <h1><?php echo $response->name; ?></h1>
-    <div class="flex gap-[20px]">
+    <div class="flex gap-[50px]">
         <div class="basis-4/12">
             <form id="chat-form" action="" class="max-w-[500px]">
                 <div>
-                    <textarea id="message-input" name="message" placeholder="Message" class="h-[200px] w-full"></textarea>
+                    <textarea id="message-input" name="message" placeholder="Message" class="h-[150px] w-full border border-gray-300 rounded-[10px] p-[20px] mb-5"></textarea>
                 </div>
                 <input type="hidden" name="ThreadId" value="<?php echo $thread_id; ?>">
                 <input type="hidden" name="AssistantId" value="<?php echo $assistant_id; ?>">
-                <button type="submit" class="btn btn-primary">Send</button>
+                <div class="text-right">
+                    <button type="submit" class="border border-gray-300 rounded-[10px] py-[10px] px-[20px]">Send</button>
+                    <span class="loading hidden">......</span>
+                </div>
             </form>
         </div>
-        <div class="basis-6/12">
-            <div id="chat-messages" class="messages border border-gray-300 rounded-[10px] p-[20px]">
+        <div class="basis-8/12">
+            <div id="chat-messages" class="messages">
                 <!-- Messages will be added here -->
             </div>
         </div>

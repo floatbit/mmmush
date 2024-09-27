@@ -1,8 +1,12 @@
+import { marked } from 'marked';
+
 export default class SingleThread {
   constructor() {
     this.form = document.getElementById('chat-form');
     this.messagesContainer = document.getElementById('chat-messages');
     this.messageInput = document.getElementById('message-input');
+    this.submitButton = this.form.querySelector('button[type="submit"]');
+    this.loadingMessage = this.form.querySelector('.loading');
     this.ajaxUrl = '/wp-admin/admin-ajax.php'; // Hardcoded admin-ajax.php URL
     this.init();
   }
@@ -19,6 +23,17 @@ export default class SingleThread {
     const threadId = formData.get('ThreadId');
     const assistantId = formData.get('AssistantId');
     const message = formData.get('message');
+
+    if (message.trim() === '') {
+      return; // Do nothing if the message is empty
+    }
+
+    // Clear out the textarea message
+    this.messageInput.value = '';
+
+    // Show the loading message and hide submit button
+    this.loadingMessage.classList.remove('hidden');
+    this.submitButton.classList.add('hidden');
 
     // Add user message to the chat
     const userMessageElement = document.createElement('div');
@@ -43,6 +58,10 @@ export default class SingleThread {
       this.handleStream(response.body);
     }).catch(error => {
       console.error('Error:', error);
+    }).finally(() => {
+      // Hide loading message and show submit button
+      this.loadingMessage.classList.add('hidden');
+      this.submitButton.classList.remove('hidden');
     });
   }
 
@@ -71,12 +90,14 @@ export default class SingleThread {
     const element = document.createElement('div');
     element.className = 'message assistant';
     this.messagesContainer.appendChild(element);
+
+    const htmlContent = marked.parse(text);
     let i = 0;
     const type = () => {
-      if (i < text.length) {
-        element.innerHTML += text.charAt(i);
+      if (i < htmlContent.length) {
+        element.innerHTML = htmlContent.substring(0, i + 1);
         i++;
-        setTimeout(type, 50); // Adjust typing speed here
+        setTimeout(type, 10); // Adjust typing speed here
       }
     };
     type();

@@ -1,13 +1,13 @@
 .single-thread {
     .message {
-        @apply p-4 rounded mb-5;
+        @apply py-4 px-8 rounded mb-8;
     }
     .message.user {
         @apply bg-blue-500 text-white;
         margin-right: 20%;
     }
     .message.assistant {
-        @apply bg-gray-200;
+        @apply bg-gray-100;
         margin-left: 20%;
     }
 }
