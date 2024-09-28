@@ -2,7 +2,7 @@
     "key": "post_type_66f5caca5e182",
     "title": "Vector Stores",
     "menu_order": 0,
-    "active": false,
+    "active": true,
     "post_type": "vector-store",
     "advanced_configuration": false,
     "import_source": "",
@@ -85,5 +85,5 @@
     "delete_with_user": false,
     "register_meta_box_cb": "",
     "enter_title_here": "",
-    "modified": 1727442845
+    "modified": 1727489810
 }

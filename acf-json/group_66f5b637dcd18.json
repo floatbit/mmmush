@@ -24,9 +24,9 @@
             "append": ""
         },
         {
-            "key": "field_66f5d06b1ee2e",
-            "label": "Files",
-            "name": "files",
+            "key": "field_66f76eb6e5e74",
+            "label": "Vector Stores",
+            "name": "vector_stores",
             "aria-label": "",
             "type": "post_object",
             "instructions": "",
@@ -38,7 +38,7 @@
                 "id": ""
             },
             "post_type": [
-                "file"
+                "vector-store"
             ],
             "post_status": [
                 "publish"
@@ -71,5 +71,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1727391890
+    "modified": 1727492507
 }
