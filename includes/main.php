@@ -77,7 +77,7 @@ add_action('template_redirect', function() {
 });
 
 function mmmush_debug($input) {
-    $log_file = $_SERVER['DOCUMENT_ROOT'] . '/debug.log';
+    $log_file = $_SERVER['DOCUMENT_ROOT'] . '/logs/' . date('Y-m-d') . '.log';
     $log_message = is_string($input) ? $input : print_r($input, true);
     $log_message = "\n==================\n\n" . $log_message;;
     file_put_contents($log_file, $log_message . PHP_EOL, FILE_APPEND);

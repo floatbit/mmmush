@@ -32,7 +32,7 @@ add_action('wp_insert_post', function($post_id, $post, $update) {
                             'type' => 'file_search', 
                         ],
                     ],
-                    'model' => 'gpt-4o',
+                    'model' => 'gpt-4o-mini',
                 ]);
                 update_field( 'assistant_id', $response->id, $post->ID );
             }
@@ -57,7 +57,7 @@ add_action('wp_insert_post', function($post_id, $post, $update) {
                             'vector_store_ids' => $vector_store_ids,
                         ],
                     ],
-                    'model' => 'gpt-4o',
+                    'model' => 'gpt-4o-mini',
                 ];
                 $response = $client->assistants()->modify($assistant_id, $data);
             }

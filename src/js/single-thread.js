@@ -16,6 +16,15 @@ export default class SingleThread {
       event.preventDefault();
       this.sendMessage();
     });
+
+    this.messageInput.addEventListener('keydown', (event) => {
+      if (event.shiftKey && event.key === 'Enter') {
+        event.preventDefault();
+        if (this.messageInput.value.trim() !== '') {
+          this.sendMessage();
+        }
+      }
+    });
   }
 
   sendMessage() {
