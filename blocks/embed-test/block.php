@@ -28,8 +28,8 @@ if ( ! empty( $block['align'] ) ) {
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
     <div class="container">
-    <h2>Kudos Chat Bot</h2>
         <div id="mmmush-embed">
+            <h3>Chat with Kudos</h3>
             <div id="mmmush-chat-container"></div>
         </div>
         <link rel="stylesheet" href="http://mmmush.localhost/embed/styles.css">

@@ -256,7 +256,16 @@ function handle_embed_send_message() {
     // Get the POST data
     $thread_id = $_POST['ThreadId'];
     mmmush_debug($thread_id);
-    $assistant_id = 'asst_OEuxgw4AwGuxq2jPXCwPdn73';
+    
+      // find assistant post by thread id
+    $thread_post = get_posts(array(
+        'numberposts' => -1,
+        'post_type'   => 'thread',
+        'meta_key'    => 'thread_id',
+        'meta_value'  => $thread_id
+    ))[0];
+    $assistant_id = get_field('assistant_id', $thread_post->ID);
+
     $message = $_POST['message'];
 
     // Create OpenAI client
