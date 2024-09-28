@@ -12,6 +12,7 @@ define('CUSTOM_BLOCKS', [
         'threads-list',
         'threads-start',
         'chat',
+        'embed-test'
     ],
     'post' => [
         'text',

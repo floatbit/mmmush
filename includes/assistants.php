@@ -237,3 +237,78 @@ function handle_send_message() {
     // End the connection when streaming is done
     exit;
 }
+
+add_action('wp_ajax_embed_send_message', 'handle_embed_send_message');
+add_action('wp_ajax_nopriv_embed_send_message', 'handle_embed_send_message');
+
+function handle_embed_send_message() {
+    mmmush_debug('embed_handle_send_message');
+    // Ensure output buffering is turned off
+    if (ob_get_length()) {
+        ob_end_clean();
+    }
+
+    // Set headers for Server-Sent Events
+    header('Content-Type: text/event-stream');
+    header('Cache-Control: no-cache');
+    header('Connection: keep-alive');
+
+    // Get the POST data
+    $thread_id = $_POST['ThreadId'];
+    mmmush_debug($thread_id);
+    $assistant_id = 'asst_OEuxgw4AwGuxq2jPXCwPdn73';
+    $message = $_POST['message'];
+
+    // Create OpenAI client
+    $client = OpenAI::client(CHATGPT_API_KEY);
+
+    // Create a message in the thread
+    $client->threads()->messages()->create($thread_id, [
+        'role' => 'user',
+        'content' => $message,
+    ]);
+
+    // Create and start a run
+    $run = $client->threads()->runs()->create($thread_id, [
+        'assistant_id' => $assistant_id,
+    ]);
+
+    // Poll for run completion and stream the results
+    while (true) {
+        $run = $client->threads()->runs()->retrieve($thread_id, $run->id);
+        mmmush_debug($run);
+        if ($run->status === 'completed') {
+            // Retrieve and send the assistant's response
+            $messages = $client->threads()->messages()->list($thread_id);
+            foreach ($messages->data as $msg) {
+                if ($msg->role === 'assistant') {
+                    $eventData = json_encode([
+                        'event' => 'message',
+                        'message' => $msg->content[0]->text->value,
+                    ]);
+                    mmmush_debug($eventData);
+                    echo "data: {$eventData}\n\n";
+                    flush();
+                    break; // Only send the latest assistant message
+                }
+            }
+            break;
+        } elseif (in_array($run->status, ['failed', 'cancelled', 'expired'])) {
+            $eventData = json_encode([
+                'event' => 'error',
+                'message' => 'Run failed: ' . $run->status,
+            ]);
+            mmmush_debug($eventData);
+            echo "data: {$eventData}\n\n";
+            flush();
+            break;
+        }
+
+        // Wait before polling again
+        sleep(1);
+    }
+
+    // End the connection when streaming is done
+    exit;
+}
+
