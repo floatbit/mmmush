@@ -1,3 +1,12 @@
+const markedScript = document.createElement('script');
+markedScript.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+document.head.appendChild(markedScript);
+
+const styleSheet = document.createElement('link');
+styleSheet.rel = 'stylesheet';
+styleSheet.href = 'http://mmmush.localhost/embed/styles.css';
+document.head.appendChild(styleSheet);
+
 function MMMush(config) {
     const embedDiv = document.getElementById('mmmush-embed');
     const chatContainer = document.getElementById('mmmush-chat-container');
@@ -112,10 +121,11 @@ function MMMush(config) {
             element.className = 'message assistant';
             messagesContainer.appendChild(element);
 
+            const htmlContent = marked.parse(text);
             let i = 0;
             const type = () => {
-                if (i < text.length) {
-                    element.innerHTML = text.substring(0, i + 1);
+                if (i < htmlContent.length) {
+                    element.innerHTML = htmlContent.substring(0, i + 1);
                     i++;
                     setTimeout(type, 10); // Adjust typing speed here
                 }

@@ -34,8 +34,34 @@ add_action('wp_insert_post', function($post_id, $post, $update) {
                     ],
                     'model' => 'gpt-4o-mini',
                 ]);
-                update_field( 'assistant_id', $response->id, $post->ID );
+                $assistant_id = $response->id;
+                update_field( 'assistant_id', $assistant_id, $post->ID );
             }
+
+            // create default thread
+            $existing_threads = get_posts(array(    
+                'numberposts' => -1,
+                'post_type'   => 'thread',
+                'meta_key'    => 'assistant_id',
+                'meta_value'  => $assistant_id
+            ));
+
+            if (count($existing_threads) === 0) {
+                mmmush_create_default_thread($assistant_id, $post);
+            }
+
+            // TODO: create default vector store
+            // $existing_vector_stores = get_posts(array(    
+            //     'numberposts' => -1,
+            //     'post_type'   => 'vector-store',
+            //     'meta_key'    => 'assistant_id',
+            //     'meta_value'  => $assistant_id
+            // ));
+
+            // if (count($existing_vector_stores) === 0) {
+            //     $new_vector_store_id = mmmush_create_default_vector_store($post);
+            //     update_field('field_66f76eb6e5e74', [$new_vector_store_id], $post->ID);
+            // }
 
             // vector stores
             $assistant_id = get_field('assistant_id', $post->ID);
@@ -76,20 +102,6 @@ add_action('wp_insert_post', function($post_id, $post, $update) {
             ]);
             // update file id
             update_field('field_66f5c2e748393', $response->id, $post->ID);
-            // // create the vector store
-            // $vector_store_id = get_field('vector_store_id', $post->ID);
-            // $file_ids = [$response->id];
-            // // create a vector store
-            // if (empty($vector_store_id)) {
-            //     $client = OpenAI::client(CHATGPT_API_KEY);
-            //     $response = $client->vectorStores()->create([
-            //         'file_ids' => $file_ids,
-            //         'name' => $post->post_title,
-            //     ]);
-            //     $vector_store_id = $response->id;
-            //     update_field('field_66f5cf94ef09e', $vector_store_id, $post->ID);
-            // }
-            // // additional files
         }
     }
 
@@ -256,7 +268,7 @@ function handle_embed_send_message() {
     // Get the POST data
     $thread_id = $_POST['ThreadId'];
     mmmush_debug($thread_id);
-    
+
       // find assistant post by thread id
     $thread_post = get_posts(array(
         'numberposts' => -1,
@@ -321,3 +333,33 @@ function handle_embed_send_message() {
     exit;
 }
 
+function mmmush_create_default_thread($assistant_id, $assistant_post) {
+    $client = OpenAI::client(CHATGPT_API_KEY);
+    $response = $client->threads()->create([]);
+    $thread_id = $response->id;
+    $new_post = [
+        'post_type' => 'thread',
+        'post_title' => $assistant_post->post_title,
+        'post_status' => 'publish',
+    ];
+    $new_post_id = wp_insert_post($new_post);
+    update_field('field_66f6b0c661eca', $thread_id, $new_post_id);
+    update_field('field_66f6b0dc59647', $assistant_id, $new_post_id);
+    update_field('field_66f855bf7b16e', uniqid(), $new_post_id);
+    return $new_post_id;
+}
+
+function mmmush_create_default_vector_store($assistant_post) {
+    $client = OpenAI::client(CHATGPT_API_KEY);
+    $response = $client->vectorStores()->create([
+        'name' => $assistant_post->post_title,
+    ]);
+    $new_post = [
+        'post_type' => 'vector-store',
+        'post_title' => $assistant_post->post_title,
+        'post_status' => 'publish',
+    ];
+    $new_post_id = wp_insert_post($new_post);
+    update_field('field_66f5cf94ef09e', $response->id, $new_post_id);
+    return $new_post_id;
+}
