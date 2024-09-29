@@ -28,12 +28,20 @@ if ( ! empty( $block['align'] ) ) {
 $assistant_id = get_query_var('AssistantId');
 
 if ($assistant_id) {
+    // find assistant post by meta field
+    $assistant_post = get_posts(array(
+        'numberposts' => -1,
+        'post_type'   => 'assistant',
+        'meta_key'    => 'assistant_id',
+        'meta_value'  => $assistant_id
+    ))[0];
+
     $client = OpenAI::client(CHATGPT_API_KEY);
     $response = $client->threads()->create([]);
     $thread_id = $response->id;
     $new_post = [
         'post_type' => 'thread',
-        'post_title' => $thread_id,
+        'post_title' => $assistant_post->post_title,
         'post_status' => 'publish',
     ];
     $new_post_id = wp_insert_post($new_post);
