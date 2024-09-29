@@ -39,6 +39,7 @@ if ($assistant_id) {
     $new_post_id = wp_insert_post($new_post);
     update_field('field_66f6b0c661eca', $thread_id, $new_post_id);
     update_field('field_66f6b0dc59647', $assistant_id, $new_post_id);
+    update_field('field_66f855bf7b16e', uniqid(), $new_post_id);
     $redirect_url = get_the_permalink($new_post_id);
 }
 ?>

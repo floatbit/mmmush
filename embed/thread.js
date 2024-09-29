@@ -20,7 +20,7 @@ function MMMush(config) {
                     <div>
                         <textarea id="mmmush-message-input" name="message" placeholder="Message"></textarea>
                     </div>
-                    <input type="hidden" name="ThreadId" value="${config.threadId}">
+                    <input type="hidden" name="ThreadEmbedId" value="${config.threadEmbedId}">
                     <div class="text-right">
                         <button type="submit">Send</button>
                         <span class="loading hidden">......</span>
@@ -52,7 +52,7 @@ function MMMush(config) {
 
         function sendMessage() {
             const formData = new FormData(form);
-            const threadId = formData.get('ThreadId');
+            const threadEmbedId = formData.get('ThreadEmbedId');
             const message = formData.get('message');
 
             if (message.trim() === '') {
@@ -77,7 +77,7 @@ function MMMush(config) {
                 method: 'POST',
                 body: new URLSearchParams({
                     action: 'embed_send_message',
-                    ThreadId: threadId,
+                    ThreadEmbedId: threadEmbedId,
                     message: message
                 }),
                 headers: {

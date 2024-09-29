@@ -7,13 +7,15 @@ require_once get_template_directory() . '/vendor/autoload.php';
 require_once get_template_directory() . '/includes/secrets.php';
 
 // Assistant post actions for new and updated posts
-add_action('wp_insert_post', function($post_id, $post, $update) {
-    if ($post->post_type === 'assistant') {
-        // Check if the post status is 'publish'
-        if ($post->post_status === 'publish') {
-            
+function mmmush_handle_wp_insert_post($post_id, $post, $update) {
+    if ($post->post_status === 'publish') {
+        if ($post->post_type === 'assistant') {    
             $assistant_id = get_field('assistant_id', $post->ID);
             $instructions = strip_tags($post->post_content);
+
+            if (empty($instructions)) {
+                $instructions = 'Respond to queries without including any citations, references, or text inside brackets (e.g., [source]), and without indicating source numbers or references of any kind. Do not include any concluding statements, such as offering suggestions, asking for feedback, or inviting further questions.';
+            }
 
             if ($update && $assistant_id) {
                 $client = OpenAI::client(CHATGPT_API_KEY);
@@ -35,7 +37,7 @@ add_action('wp_insert_post', function($post_id, $post, $update) {
                     'model' => 'gpt-4o-mini',
                 ]);
                 $assistant_id = $response->id;
-                update_field( 'assistant_id', $assistant_id, $post->ID );
+                update_field('assistant_id', $assistant_id, $post->ID);
             }
 
             // create default thread
@@ -51,17 +53,17 @@ add_action('wp_insert_post', function($post_id, $post, $update) {
             }
 
             // TODO: create default vector store
-            // $existing_vector_stores = get_posts(array(    
-            //     'numberposts' => -1,
-            //     'post_type'   => 'vector-store',
-            //     'meta_key'    => 'assistant_id',
-            //     'meta_value'  => $assistant_id
-            // ));
+            $existing_vector_stores = get_posts(array(    
+                'numberposts' => -1,
+                'post_type'   => 'vector-store',
+                'meta_key'    => 'assistant_id',
+                'meta_value'  => $assistant_id
+            ));
 
-            // if (count($existing_vector_stores) === 0) {
-            //     $new_vector_store_id = mmmush_create_default_vector_store($post);
-            //     update_field('field_66f76eb6e5e74', [$new_vector_store_id], $post->ID);
-            // }
+            if (count($existing_vector_stores) === 0) {
+                $new_vector_store_id = mmmush_create_default_vector_store($assistant_id,$post);
+                update_field('field_66f76eb6e5e74', [$new_vector_store_id], $post->ID);
+            }
 
             // vector stores
             $assistant_id = get_field('assistant_id', $post->ID);
@@ -91,22 +93,8 @@ add_action('wp_insert_post', function($post_id, $post, $update) {
         }
     }
 
-    if ($post->post_type === 'file') {
-        if ($post->post_status === 'publish') {
-            // create the file
-            $file = get_field('file', $post->ID);
-            $client = OpenAI::client(CHATGPT_API_KEY);
-            $response = $client->files()->upload([
-                'purpose' => 'assistants',
-                'file' => fopen($file['url'], 'r'),
-            ]);
-            // update file id
-            update_field('field_66f5c2e748393', $response->id, $post->ID);
-        }
-    }
-
-    if ($post->post_type === 'vector-store') {
-        if ($post->post_status === 'publish') {
+    if ($post->post_status === 'publish' && $update === true) {
+        if ($post->post_type === 'vector-store') {
             $client = OpenAI::client(CHATGPT_API_KEY);
             $vector_store_id = get_field('vector_store_id', $post->ID);
             if (empty($vector_store_id)) {
@@ -140,7 +128,22 @@ add_action('wp_insert_post', function($post_id, $post, $update) {
         }
     }
 
-}, 10, 3);
+    if ($post->post_status === 'publish') {
+        if ($post->post_type === 'file') {
+            // create the file
+            $file = get_field('file', $post->ID);
+            $client = OpenAI::client(CHATGPT_API_KEY);
+            $response = $client->files()->upload([
+                'purpose' => 'assistants',
+                'file' => fopen($file['url'], 'r'),
+            ]);
+            // update file id
+            update_field('field_66f5c2e748393', $response->id, $post->ID);
+        }
+    }
+
+}
+add_action('wp_insert_post', 'mmmush_handle_wp_insert_post', 10, 3);
 
 // Delete assistant when post is trashed
 add_action('wp_trash_post', function($post_id) {
@@ -266,10 +269,20 @@ function handle_embed_send_message() {
     header('Connection: keep-alive');
 
     // Get the POST data
-    $thread_id = $_POST['ThreadId'];
-    mmmush_debug($thread_id);
+    $thread_embed_id = $_POST['ThreadEmbedId'];
+    mmmush_debug($thread_embed_id);
 
-      // find assistant post by thread id
+    // find thread post by thread embed id
+    $thread_post = get_posts(array(
+        'numberposts' => -1,
+        'post_type'   => 'thread',
+        'meta_key'    => 'thread_embed_id',
+        'meta_value'  => $thread_embed_id
+    ))[0];
+    
+    $thread_id = get_field('thread_id', $thread_post->ID);
+
+    // find assistant post by thread id
     $thread_post = get_posts(array(
         'numberposts' => -1,
         'post_type'   => 'thread',
@@ -349,7 +362,10 @@ function mmmush_create_default_thread($assistant_id, $assistant_post) {
     return $new_post_id;
 }
 
-function mmmush_create_default_vector_store($assistant_post) {
+function mmmush_create_default_vector_store($assistant_id, $assistant_post) {
+    // Temporarily remove the wp_insert_post action
+    remove_action('wp_insert_post', 'mmmush_handle_wp_insert_post', 10, 3);
+
     $client = OpenAI::client(CHATGPT_API_KEY);
     $response = $client->vectorStores()->create([
         'name' => $assistant_post->post_title,
@@ -360,6 +376,11 @@ function mmmush_create_default_vector_store($assistant_post) {
         'post_status' => 'publish',
     ];
     $new_post_id = wp_insert_post($new_post);
-    update_field('field_66f5cf94ef09e', $response->id, $new_post_id);
+    update_field('field_66f5cb66169b5', $response->id, $new_post_id);
+    update_field('field_66f955498d624', $assistant_id, $new_post_id);
+
+    // Re-add the wp_insert_post action
+    add_action('wp_insert_post', 'mmmush_handle_wp_insert_post', 10, 3);
+
     return $new_post_id;
 }
