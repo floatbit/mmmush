@@ -37,7 +37,8 @@ function mmmush_handle_wp_insert_post($post_id, $post, $update) {
                     'model' => 'gpt-4o-mini',
                 ]);
                 $assistant_id = $response->id;
-                update_field('assistant_id', $assistant_id, $post->ID);
+                update_field('field_66f5b63711fc3', $assistant_id, $post->ID);
+                update_field('field_66f9e904b7204', uniqid(), $post->ID);
             }
 
             // create default thread
@@ -359,7 +360,8 @@ function mmmush_create_default_thread($assistant_id, $assistant_post) {
     update_field('field_66f6b0c661eca', $thread_id, $new_post_id);
     update_field('field_66f6b0dc59647', $assistant_id, $new_post_id);
     update_field('field_66f855bf7b16e', uniqid(), $new_post_id);
-    return $new_post_id;
+    $thread_post = get_post($new_post_id);
+    return $thread_post;
 }
 
 function mmmush_create_default_vector_store($assistant_id, $assistant_post) {
@@ -384,3 +386,26 @@ function mmmush_create_default_vector_store($assistant_id, $assistant_post) {
 
     return $new_post_id;
 }
+
+// Function to handle AJAX request to create a new thread
+function create_new_thread() {
+    $assistant_embed_id = $_POST['assistantEmbedId'];
+    $assistant_post = get_posts(array(
+        'numberposts' => -1,
+        'post_type'   => 'assistant',
+        'meta_key'    => 'assistant_embed_id',
+        'meta_value'  => $assistant_embed_id
+    ))[0];
+
+    if ($assistant_post) {
+        $assistant_id = get_field('assistant_id', $assistant_post->ID);
+        $thread_post = mmmush_create_default_thread($assistant_id, $assistant_post);
+        $thread_embed_id = get_field('thread_embed_id', $thread_post->ID);
+
+        wp_send_json_success(array('thread_embed_id' => $thread_embed_id));
+    } else {
+        wp_send_json_error(array('message' => 'Assistant not found'));
+    }
+}
+add_action('wp_ajax_create_new_thread', 'create_new_thread');
+add_action('wp_ajax_nopriv_create_new_thread', 'create_new_thread');
