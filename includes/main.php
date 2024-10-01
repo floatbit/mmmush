@@ -69,13 +69,9 @@ function pd($array) {
 }   
 
 add_action('template_redirect', function() {
+    // user not logged in
     if (!is_user_logged_in()) {
         wp_redirect(wp_login_url());
-        exit;
-    }
-    // Check if the current page is the one with ID 134
-    if (is_page(134) && empty(get_query_var('AssistantId'))) {
-        wp_redirect(get_the_permalink(5));
         exit;
     }
 });
