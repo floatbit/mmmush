@@ -14,6 +14,7 @@ define('CUSTOM_BLOCKS', [
         'chat',
         'embed-test',
         'user-dashboard',
+        'user-files',
     ],
     'post' => [
         'text',

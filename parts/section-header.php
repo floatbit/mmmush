@@ -4,10 +4,9 @@
   </div>
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1">
-      <li><a>Assistants</a></li>
-      <li><a>Binders</a></li>
-      <li><a>Files</a></li>
-      <li><a>Plan</a></li>
+      <li><a href="/">Assistants</a></li>
+      <li><a href="/files">Files</a></li>
+      <li><a href="/account">Account</a></li>
     </ul>
   </div>
 </header>
