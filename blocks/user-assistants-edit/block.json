@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/user-assistants-edit",
+  "title": "User Assistants - Edit",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["user-assistants-edit"],
+  "_viewScript": ["blocks/user-assistants-edit"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

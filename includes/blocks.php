@@ -15,6 +15,9 @@ define('CUSTOM_BLOCKS', [
         'embed-test',
         'user-dashboard',
         'user-files',
+        'user-assistants',
+        'user-assistants-create',
+        'user-assistants-edit',
     ],
     'post' => [
         'text',

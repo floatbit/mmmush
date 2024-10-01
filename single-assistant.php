@@ -3,10 +3,14 @@
 <div class="container">
     <div class="grid gap-8 grid-cols-3">
         <div class="col-span-2">
-            <p>
-                <strong>Description:</strong>
-                <?php the_content(); ?>
-            </p>
+            <h3>About</h3>
+            <?php the_content(); ?>
+
+            <h3>Files</h3>
+            <?php 
+                $vector_store = get_field('vector_stores', $assistant->ID);
+                $files = get_field('files', $vector_store->ID);
+            ?>
         </div>
     </div>
 </div>

@@ -4,8 +4,8 @@
   </div>
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1">
-      <li><a href="/">Assistants</a></li>
-      <li><a href="/files">Files</a></li>
+      <li><a href="/user/assistants">Assistants</a></li>
+      <li><a href="/user/files">Files</a></li>
       <li><a href="/account">Account</a></li>
     </ul>
   </div>
