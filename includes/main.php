@@ -76,6 +76,9 @@ add_action('template_redirect', function() {
     }
 });
 
+// Disable sitemap
+add_filter( 'wp_sitemaps_enabled', '__return_false' );
+
 function mmmush_debug($input) {
     $log_file = $_SERVER['DOCUMENT_ROOT'] . '/logs/' . date('Y-m-d') . '.log';
     $log_message = is_string($input) ? $input : print_r($input, true);

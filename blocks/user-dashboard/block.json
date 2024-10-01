@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/user-dashboard",
+  "title": "User Dashboard",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["user-dashboard"],
+  "_viewScript": ["blocks/user-dashboard"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

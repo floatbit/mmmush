@@ -12,7 +12,8 @@ define('CUSTOM_BLOCKS', [
         'threads-list',
         'threads-start',
         'chat',
-        'embed-test'
+        'embed-test',
+        'user-dashboard',
     ],
     'post' => [
         'text',

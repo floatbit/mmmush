@@ -71,6 +71,10 @@ module.exports = {
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
     containerStyles,
+    require('daisyui'),  
   ],
+  daisyui: {
+    themes: ["light"]
+  }
 }
 
