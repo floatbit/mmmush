@@ -48,15 +48,19 @@ $assistants = get_posts([
                     <p class="font-normal text-gray-500"><?php echo $assistant->post_content; ?></p>
                     <div>
                         <p class="hidden"><span class="font-bold">Binder</span><br> <?php echo $vector_store->post_title; ?></p>
-                        <p><span class="font-bold">Files - <?php print count($files); ?></span></p>
-                        <p class="hidden"><span class="font-bold">Files</span><br>
-                        <?php foreach ($files as $file) : ?>
-                            <?php $the_file = get_field('file', $file->ID); ?>
-                            <a href="<?php echo $the_file['url']; ?>" target="_blank">
-                                <?php echo $the_file['title']; ?>
-                            </a><br>
-                        <?php endforeach; ?>
-                        </p>
+                        <?php if (is_array($files) && count($files) > 0) : ?>
+                            <p><span class="font-bold">Files - <?php print count($files); ?></span></p>
+                            <p class="hidden"><span class="font-bold">Files</span><br>
+                            <?php foreach ($files as $file) : ?>
+                                <?php $the_file = get_field('file', $file->ID); ?>
+                                <a href="<?php echo $the_file['url']; ?>" target="_blank">
+                                    <?php echo $the_file['title']; ?>
+                                </a><br>
+                                <?php endforeach; ?>
+                            </p>
+                        <?php else: ?>
+                            <p><span class="font-bold">No files</span></p>
+                        <?php endif; ?>
                     </div>
                     <div class="card-actions justify-end">
                         <a class="btn btn-info btn-sm" href="<?php echo get_the_permalink($assistant->ID); ?>">CHAT</a>

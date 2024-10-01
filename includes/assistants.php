@@ -6,10 +6,62 @@ require_once get_template_directory() . '/vendor/autoload.php';
 // Include the secrets file
 require_once get_template_directory() . '/includes/secrets.php';
 
+add_action('template_redirect', function() {
+    $post = get_post();
+    // user not logged in - go to login url
+    if (!is_user_logged_in()) {
+        wp_redirect(wp_login_url());
+        exit;
+    } else {
+        // user logged in - check if they have an assistant
+        $user = wp_get_current_user();
+        $assistant = get_posts(array(
+            'numberposts' => -1,    
+            'post_type'   => 'assistant',
+            'author' => $user->ID
+        ));
+        if (count($assistant) === 0 && $post->ID != 308) { 
+            wp_redirect(home_url('/user/assistants/create?new=1'));
+            exit;
+        }
+    }
+});
+
+// Disable sitemap
+add_filter( 'wp_sitemaps_enabled', '__return_false' );
+
+function mmmush_debug($input) {
+    $log_file = $_SERVER['DOCUMENT_ROOT'] . '/logs/' . date('Y-m-d') . '.log';
+    $log_message = is_string($input) ? $input : print_r($input, true);
+    $log_message = "\n==================\n\n" . $log_message;;
+    file_put_contents($log_file, $log_message . PHP_EOL, FILE_APPEND);
+}
+
+// add query vars
+add_filter( 'query_vars', 'mmmush_query_vars' );
+function mmmush_query_vars( $query_vars ){
+    $query_vars[] = 'AssistantId';
+    $query_vars[] = 'AssistantEmbedId';
+    return $query_vars;
+}
+
+// login redirect
+add_filter('login_redirect', 'mmmush_custom_login_redirect', 10, 3);
+function mmmush_custom_login_redirect($redirect_to, $request, $user) {
+    return home_url();
+}
+
+// register redirect
+add_action('user_register', 'mmmush_custom_registration_redirect');
+function mmmush_custom_registration_redirect($user_id) {
+    wp_safe_redirect(home_url());
+    exit;
+}
+
 // Assistant post actions for new and updated posts
 function mmmush_handle_wp_insert_post($post_id, $post, $update) {
     if ($post->post_status === 'publish') {
-        if ($post->post_type === 'assistant') {    
+        if ($post->post_type === 'assistant') { 
             $assistant_id = get_field('assistant_id', $post->ID);
             $instructions = strip_tags($post->post_content);
 
@@ -144,7 +196,7 @@ function mmmush_handle_wp_insert_post($post_id, $post, $update) {
     }
 
 }
-add_action('wp_insert_post', 'mmmush_handle_wp_insert_post', 10, 3);
+//add_action('wp_insert_post', 'mmmush_handle_wp_insert_post', 10, 3);
 
 // Delete assistant when post is trashed
 add_action('wp_trash_post', function($post_id) {

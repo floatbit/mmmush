@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/user-files-create",
+  "title": "User Files Create",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["user-files-create"],
+  "_viewScript": ["blocks/user-files-create"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

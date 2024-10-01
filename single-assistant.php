@@ -3,7 +3,7 @@
 <div class="container">
     <div class="grid gap-4 grid-cols-1 max-w-[720px]">
         <div>
-            <h3>Assistant Description</h3>
+            <h3>Description</h3>
             <?php the_content(); ?>
         </div>
 
@@ -11,9 +11,10 @@
             $vector_store = get_field('vector_stores', get_the_ID());
             $files = get_field('files', $vector_store->ID);
         ?>
-        <?php if ($files) : ?>
         <div>
             <h3>Files</h3>
+            <p>Your assistant will use these files to answer queries.</p>
+            <?php if ($files) : ?>
             <p>
                 <ul>
                     <?php foreach ($files as $file): ?>
@@ -27,20 +28,24 @@
                     <?php endforeach; ?>
                 </ul>
             </p>
+            <?php else: ?>
+            <p>
+                No files found. 
+            </p>
+            <?php endif; ?>
             <p>
                 <a href="/user/files/create" class="btn btn-sm">+ Add File</a>
             </p>
         </div>
-        <?php endif; ?>
         <div>   
             <h3>Embed Code</h3>
-            <p>You can use this assistant in your website by copying and pasting the following code.</p>
+            <?php if ($files) : ?>
+                <p>You can use this assistant in your website by copying and pasting the following code.</p>
+            <?php else: ?>
                 <p>
-                    Sorry, you cannot embed this assistant because there are no files. 
+                    Upload files to your assistant to enable embedding.
                 </p>
-                <p>
-                    <a href="/user/files/create" class="btn btn-sm">+ Add File</a>
-                </p>
+            <?php endif; ?>
         </div>
     </div>
 </div>

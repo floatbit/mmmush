@@ -35,12 +35,6 @@ add_action('wp_enqueue_scripts', function () {
     wp_register_script('blocks/text', assets_url('/dist/blocks/text.js'), ['jquery'], null, true);
 });
 
-add_filter( 'query_vars', 'mmmush_query_vars' );
-function mmmush_query_vars( $query_vars ){
-    $query_vars[] = 'AssistantId';
-    return $query_vars;
-}
-
 /**
  * Disable Gutenberg for specific post types
  */
@@ -67,21 +61,3 @@ function pd($array) {
     pr($array);
     die();
 }   
-
-add_action('template_redirect', function() {
-    // user not logged in
-    if (!is_user_logged_in()) {
-        wp_redirect(wp_login_url());
-        exit;
-    }
-});
-
-// Disable sitemap
-add_filter( 'wp_sitemaps_enabled', '__return_false' );
-
-function mmmush_debug($input) {
-    $log_file = $_SERVER['DOCUMENT_ROOT'] . '/logs/' . date('Y-m-d') . '.log';
-    $log_message = is_string($input) ? $input : print_r($input, true);
-    $log_message = "\n==================\n\n" . $log_message;;
-    file_put_contents($log_file, $log_message . PHP_EOL, FILE_APPEND);
-}

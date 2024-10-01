@@ -20,6 +20,7 @@ define('CUSTOM_BLOCKS', [
         'user-assistants',
         'user-assistants-create',
         'user-assistants-edit',
+        'user-files-create',
     ],
     'post' => [
         'text',

@@ -8,9 +8,9 @@
     <?php wp_head(); ?>
 </head>
 
-<body <?php body_class('antialiased'); ?>>
+<body <?php //body_class('antialiased'); ?>>
 
     <?php get_template_part('parts/section-header'); ?>
     <?php get_template_part('parts/breadcrumbs'); ?>
 
-    <main class="prose-sm max-w-none pt-5 pb-10">
+    <main class="prose-sm max-w-none pt-10 pb-10">
