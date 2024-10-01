@@ -1,7 +1,7 @@
 #mmmush-embed {
     font-size: 14px;
-    width: 420px;
-    height: 600px;
+    width: 500px;
+    height: 650px;
     border: 1px solid #e0e0e0;
     padding: 20px;
     position: fixed;
@@ -38,7 +38,7 @@
 #mmmush-chat-container {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 50px);
+    height: calc(100% - 40px);
     flex-wrap: wrap;
 }
 
@@ -47,14 +47,24 @@
     overflow-y: auto;
 }
 
+#mmmush-chat-form {
+    display: flex;
+    align-items: flex-end;
+}
+
+#mmmush-embed .textarea-container {
+    width: 100%;
+}
+
 #mmmush-embed textarea {
     font-size: 14px;
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100%;
     border: 1px solid #e0e0e0;
     padding: 10px;
     border-radius: 10px;
-    margin-bottom: 10px;
+    position: relative;
+    top: 4px;
 }
 
 #mmmush-embed button {

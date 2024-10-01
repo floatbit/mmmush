@@ -42,18 +42,18 @@
             <?php if ($files) : ?>
             <p>You can use this assistant in your website by copying and pasting the following code. Look to the right - that's how it will look.</p>
             <textarea readonly class="textarea textarea-bordered text-sm h-[260px] w-full">
-                <div id="mmmush-embed">
-                    <h3><?php the_title(); ?></h3>
-                    <div id="mmmush-chat-container"></div>
-                </div>
-                <script src="http://mmmush.localhost/embed/thread.js"></script>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
+                &lt;div id=&quot;mmmush-embed&quot;&gt;
+                    &lt;h3&gt;<?php the_title(); ?>&lt;/h3&gt;
+                    &lt;div id=&quot;mmmush-chat-container&quot;&gt;&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;script src=&quot;http://mmmush.localhost/embed/thread.js&quot;&gt;&lt;/script&gt;
+                &lt;script&gt;
+                    document.addEventListener(&#39;DOMContentLoaded&#39;, function() {
                         MMMush({
-                            assistantEmbedId: '<?php print get_field('assistant_embed_id'); ?>'
+                            assistantEmbedId: &#39;<?php print get_field('assistant_embed_id'); ?>&#39;
                         });
                     });
-                </script>
+                &lt;/script&gt;
             </textarea>
             <?php else: ?>
             <p role="alert" class="alert alert-warning">

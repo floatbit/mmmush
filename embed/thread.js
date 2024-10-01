@@ -21,7 +21,7 @@ async function MMMush(config) {
         </div>
         <div>
             <form id="mmmush-chat-form" action="">
-                <div>
+                <div class="textarea-container">
                     <textarea id="mmmush-message-input" name="message" placeholder="Message"></textarea>
                 </div>
                 <input type="hidden" name="assistantEmbedId" value="${config.assistantEmbedId}">
@@ -75,6 +75,7 @@ async function MMMush(config) {
                 messageInput.value = '';
 
                 // Show the loading message and hide submit button
+                messageInput.classList.add('hidden');
                 loadingMessage.classList.remove('hidden');
                 submitButton.classList.add('hidden');
 
@@ -103,6 +104,7 @@ async function MMMush(config) {
                     // Hide loading message and show submit button
                     loadingMessage.classList.add('hidden');
                     submitButton.classList.remove('hidden');
+                    messageInput.classList.remove('hidden');
                 });
             }
 
