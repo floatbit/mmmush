@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/user-check",
+  "title": "User Check",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["user-check"],
+  "_viewScript": ["blocks/user-check"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

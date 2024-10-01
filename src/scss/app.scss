@@ -14,6 +14,15 @@
   p {
     @apply my-4;
   }
+  ul {
+    @apply list-disc;
+  }
+  ol {
+    @apply list-decimal;
+  }
+  a {
+    @apply underline;
+  }
 }
 // h1, h2, h3, h4, h5, h6 {
 //   @apply mb-4;
@@ -33,7 +42,16 @@ html {
 }
 
 .breadcrumbs {
+  a {
+    @apply no-underline;
+  }
   li:last-child {
     @apply font-bold;
+  }
+}
+
+header {
+  a {
+    @apply no-underline;
   }
 }

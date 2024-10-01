@@ -13,4 +13,4 @@
     <?php get_template_part('parts/section-header'); ?>
     <?php get_template_part('parts/breadcrumbs'); ?>
 
-    <main class="prose-sm max-w-none py-10">
+    <main class="prose-sm max-w-none pt-5 pb-10">

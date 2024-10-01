@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/user-login",
+  "title": "User Login",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["user-login"],
+  "_viewScript": ["blocks/user-login"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}

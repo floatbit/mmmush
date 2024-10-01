@@ -49,6 +49,7 @@ module.exports = {
     './header.php',
     './index.php',
     './single-thread.php',
+    './single-assistant.php',
     './parts/**/*.php',
     './blocks/**/*.php',
     './src/scss/**/*.scss',

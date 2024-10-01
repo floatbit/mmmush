@@ -13,6 +13,8 @@ define('CUSTOM_BLOCKS', [
         'threads-start',
         'chat',
         'embed-test',
+        'user-check',
+        'user-login',
         'user-dashboard',
         'user-files',
         'user-assistants',
