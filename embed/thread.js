@@ -1,4 +1,6 @@
-const BASE_URL = 'http://mmmush.localhost';
+const scriptElement = document.currentScript;
+const scriptSrc = scriptElement.src;
+const BASE_URL = new URL(scriptSrc).origin;
 
 const markedScript = document.createElement('script');
 markedScript.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
