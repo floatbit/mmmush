@@ -1,7 +1,48 @@
 <?php get_header(); ?>
 
+<?php if (isset($_POST['file_id'])) : ?>
+    <?php 
+        $file_id = $_POST['file_id'];
+        $file_post = get_posts([
+            'post_type' => 'file',
+            'p' => $file_id,
+            'numberposts' => 1
+        ])[0];
+        if ($file_post) {
+            // Delete from OpenAI
+            $openai_file_id = get_field('file_id', $file_id);
+            if ($openai_file_id) {
+                $client = OpenAI::client(CHATGPT_API_KEY);
+                $client->files()->delete($openai_file_id);
+            }
+            $file = get_field('file', $file_post->ID);
+            $media_id = $file['ID'];
+            wp_delete_attachment($media_id, true);
+            wp_delete_post($file_post->ID, true);
+            $file_deleted = true;
+        }
+    ?>
+<?php endif; ?>
+
 <div class="container">
     <div class="grid gap-4 grid-cols-1 max-w-[720px]">
+        <?php if ($file_deleted) : ?>
+            <p role="alert" class="alert alert-success">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 shrink-0 stroke-current"
+                    fill="none"
+                    viewBox="0 0 24 24">
+                    <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>File deleted.</span>
+            </p>
+        <?php endif; ?>
+            
         <div>
             <h3>Description</h3>
             <?php the_content(); ?>
@@ -24,7 +65,14 @@
                             $file_name = $the_file['name'];
                             $file_subtype = $the_file['subtype'];
                         ?>  
-                        <li><a href="<?php echo $file_url; ?>"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>)</li>
+                        <li class="file">
+                            <a href="<?php echo $file_url; ?>"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>)
+                            <form action="<?php print get_the_permalink(); ?>" method="post" class="inline">
+                                <button class="btn btn-xs btn-warning hidden delete-file">Delete</button>
+                                <input type="submit" value="Confirm deletetion" class="btn btn-xs btn-error hidden confirm-delete-file">
+                                <input type="hidden" name="file_id" value="<?php echo $file->ID; ?>">
+                            </form>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
             </p>

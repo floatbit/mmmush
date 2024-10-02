@@ -3,4 +3,10 @@
         height: calc(100vh - 200px);
         min-height: 650px;
     }
+
+    .file:hover {
+        .btn-warning {
+            @apply inline-block;
+        }
+    }
 }

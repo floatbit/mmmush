@@ -3,7 +3,7 @@ const scriptSrc = scriptElement.src;
 const BASE_URL = new URL(scriptSrc).origin;
 
 const markedScript = document.createElement('script');
-markedScript.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+markedScript.src = `${BASE_URL}/embed//marked.min.js`;
 document.head.appendChild(markedScript);
 
 const styleSheet = document.createElement('link');
