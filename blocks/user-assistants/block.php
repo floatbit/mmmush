@@ -42,33 +42,26 @@ $assistants = get_posts([
                 $vector_store = get_field('vector_stores', $assistant->ID);
                 $files = get_field('files', $vector_store->ID);
             ?>
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
+            <div class="card bg-base-100 shadow-lg">
+                <div class="card-body min-h-[360px]">
                     <h2 class="card-title mt-0"><?php echo $assistant->post_title; ?></h2>
                     <p class="font-normal text-gray-500"><?php echo $assistant->post_content; ?></p>
                     <div>
                         <p class="hidden"><span class="font-bold">Binder</span><br> <?php echo $vector_store->post_title; ?></p>
-                        <?php if (is_array($files) && count($files) > 0) : ?>
-                            <p><span class="font-bold">Files - <?php print count($files); ?></span></p>
-                            <p class="hidden"><span class="font-bold">Files</span><br>
-                            <?php foreach ($files as $file) : ?>
-                                <?php $the_file = get_field('file', $file->ID); ?>
-                                <a href="<?php echo $the_file['url']; ?>" target="_blank">
-                                    <?php echo $the_file['title']; ?>
-                                </a><br>
-                                <?php endforeach; ?>
-                            </p>
-                        <?php else: ?>
-                            <p><span class="font-bold">No files</span></p>
-                        <?php endif; ?>
+                        <?php if (is_array($files) && count($files) > 0) {
+                                $file_text = count($files) . ' ' . (count($files) == 1 ? 'File' : 'Files');
+                        } else {
+                            $file_text = 'No files';
+                        }?>
                     </div>
-                    <div class="card-actions justify-end">
-                        <a class="btn btn-info btn-sm" href="<?php echo get_the_permalink($assistant->ID); ?>">CHAT</a>
+                    <div class="card-actions justify-between items-end">
+                        <div class="badge badge-outline lowercase"><?php echo $file_text; ?></div>
+                        <a class="btn btn-sm" href="<?php echo get_the_permalink($assistant->ID); ?>">CHAT</a>
                     </div>
                 </div>
             </div>
             <?php endforeach; ?>
-            <div class="card bg-base-100 shadow-xl">
+            <div class="card bg-base-100 shadow-lg">
                 <div class="card-body items-center justify-center">
                     <p class="text-3xl card-title">
                         <a class="btn btn-lg " href="/user/assistants/create">+ Create New Assistant</a>
