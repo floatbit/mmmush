@@ -11,18 +11,18 @@ styleSheet.rel = 'stylesheet';
 styleSheet.href = `${BASE_URL}/embed/styles.css`;
 document.head.appendChild(styleSheet);
 
-async function MMMush(config) {
-    const embedDiv = document.getElementById('mmmush-embed');
-    const chatContainer = document.getElementById('mmmush-chat-container');
+async function allybox(config) {
+    const embedDiv = document.getElementById('allybox-embed');
+    const chatContainer = document.getElementById('allybox-chat-container');
     if (chatContainer) {
         chatContainer.innerHTML = `
-        <div id="mmmush-chat-messages">
+        <div id="allybox-chat-messages">
             <!-- Messages will be added here -->
         </div>
         <div>
-            <form id="mmmush-chat-form" action="">
+            <form id="allybox-chat-form" action="">
                 <div class="textarea-container">
-                    <textarea id="mmmush-message-input" name="message" placeholder="Ask me about"></textarea>
+                    <textarea id="allybox-message-input" name="message" placeholder="Ask me about"></textarea>
                 </div>
                 <input type="hidden" name="assistantEmbedId" value="${config.assistantEmbedId}">
                 <div class="text-right">
@@ -33,9 +33,9 @@ async function MMMush(config) {
         </div>
         `;
 
-        const form = document.getElementById('mmmush-chat-form');
-        const messagesContainer = document.getElementById('mmmush-chat-messages');
-        const messageInput = document.getElementById('mmmush-message-input');
+        const form = document.getElementById('allybox-chat-form');
+        const messagesContainer = document.getElementById('allybox-chat-messages');
+        const messageInput = document.getElementById('allybox-message-input');
         const submitButton = form.querySelector('button[type="submit"]');
         const loadingMessage = form.querySelector('.loading');
         const ajaxUrl = `${BASE_URL}/wp-admin/admin-ajax.php`;
@@ -174,7 +174,7 @@ async function MMMush(config) {
     // Function to check if the thread cookie exists and create a new thread if it doesn't
     function checkAndCreateThread(assistantEmbedId) {
         return new Promise((resolve, reject) => {
-            const cookieName = `mmmush.threads.${assistantEmbedId}.threadEmbedId`;
+            const cookieName = `allybox.threads.${assistantEmbedId}.threadEmbedId`;
             let threadEmbedId = getCookie(cookieName);
 
             if (threadEmbedId) {
@@ -207,7 +207,7 @@ async function MMMush(config) {
     }
 
     function scrollToBottom() {
-        const messagesContainer = document.getElementById('mmmush-chat-messages');
+        const messagesContainer = document.getElementById('allybox-chat-messages');
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }

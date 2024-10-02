@@ -91,14 +91,14 @@
             <?php if ($files) : ?>
             <p>You can use this assistant in your website by copying and pasting the following code.</p>
             <textarea readonly class="textarea textarea-bordered text-sm h-[260px] w-full overflow-hidden">
-                &lt;div id=&quot;mmmush-embed&quot;&gt;
+                &lt;div id=&quot;allybox-embed&quot;&gt;
                     &lt;h3&gt;<?php the_title(); ?>&lt;/h3&gt;
-                    &lt;div id=&quot;mmmush-chat-container&quot;&gt;&lt;/div&gt;
+                    &lt;div id=&quot;allybox-chat-container&quot;&gt;&lt;/div&gt;
                 &lt;/div&gt;
                 &lt;script src=&quot;https://dashboard.allybox.app/embed/thread.js&quot;&gt;&lt;/script&gt;
                 &lt;script&gt;
                     document.addEventListener(&#39;DOMContentLoaded&#39;, function() {
-                        MMMush({
+                        allybox({
                             assistantEmbedId: &#39;<?php print get_field('assistant_embed_id'); ?>&#39;
                         });
                     });
@@ -124,14 +124,14 @@
     </div>
 </div>
 
-<div id="mmmush-embed" class="shadow-xl">
+<div id="allybox-embed" class="shadow-xl">
     <h3><?php the_title(); ?></h3>
-    <div id="mmmush-chat-container"></div>
+    <div id="allybox-chat-container"></div>
 </div>
 <script src="https://dashboard.allybox.app/embed/thread.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        MMMush({
+        allybox({
             assistantEmbedId: '<?php print get_field('assistant_embed_id'); ?>'
         });
     });
