@@ -26,6 +26,7 @@
 
 <div class="container">
     <div class="grid gap-4 grid-cols-1 max-w-[720px]">
+        
         <?php if ($file_deleted) : ?>
             <p role="alert" class="alert alert-success">
                 <svg
