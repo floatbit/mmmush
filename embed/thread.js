@@ -22,7 +22,7 @@ async function MMMush(config) {
         <div>
             <form id="mmmush-chat-form" action="">
                 <div class="textarea-container">
-                    <textarea id="mmmush-message-input" name="message" placeholder="Message"></textarea>
+                    <textarea id="mmmush-message-input" name="message" placeholder="Ask me about"></textarea>
                 </div>
                 <input type="hidden" name="assistantEmbedId" value="${config.assistantEmbedId}">
                 <div class="text-right">
