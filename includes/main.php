@@ -32,8 +32,13 @@ add_action('wp_enqueue_scripts', function () {
 
     // Register script for blocks
     // If needed, separate the script per block
-    wp_register_script('blocks/text', assets_url('/dist/blocks/text.js'), ['jquery'], null, true);
+    // wp_register_script('blocks/text', assets_url('/dist/blocks/text.js'), ['jquery'], null, true);
 });
+
+function my_custom_login_styles() {
+    wp_enqueue_style('app', assets_url('/dist/app.css'), [], null);
+}
+add_action('login_enqueue_scripts', 'my_custom_login_styles');
 
 /**
  * Disable Gutenberg for specific post types

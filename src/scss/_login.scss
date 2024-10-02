@@ -1,0 +1,42 @@
+body.login {
+    //@apply flex justify-center items-center h-screen;
+    #login {
+        @apply p-0;
+        padding-top: 250px;
+        padding-bottom: 100px;
+        width: 420px;
+    }
+    h1 {
+        @apply hidden;
+    }
+    .notice {
+        @apply rounded-md border border-gray-200;
+    }
+    #loginform,
+    #registerform,
+    #lostpasswordform {
+        @apply m-0 shadow-xl rounded-md border border-gray-200;
+    }
+    label {
+        @apply label-text mb-1;
+    }
+    input[type="text"],
+    input[type="password"] {
+        @apply input input-bordered w-full text-sm;
+    }
+
+    .forgetmenot {
+        @apply hidden;
+    }
+    #wp-submit {
+        @apply btn btn-primary w-full m-0;
+    }
+
+    #nav {
+        @apply p-0 text-center;
+    }
+
+    #backtoblog {
+        @apply hidden;
+    }
+}
