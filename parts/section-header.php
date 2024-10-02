@@ -5,7 +5,19 @@
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1">
       <li><a href="/user/assistants">Assistants</a></li>
-      <li><a href="/account">Account</a></li>
+      <li>
+        <details>
+          <summary>Account</summary>
+          <ul class="bg-base-100 rounded-t-none p-2">
+            <li><a href="/account/profile">Profile</a></li>
+            <li><a href="/account/plans">Upgrade</a></li>
+            <li>
+              <div class="divider px-2 m-0"></div>
+            </li>
+            <li><a href="/wp-login.php?action=logout&_wpnonce=<?php echo wp_create_nonce('logout-nonce'); ?>">Logout</a></li>
+          </ul>
+        </details>
+      </li>
     </ul>
   </div>
 </header>
