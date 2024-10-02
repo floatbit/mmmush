@@ -132,7 +132,7 @@ if ($assistant) {
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
     <div class="container">
-        <div class="grid gap-x-8 gap-y-12 grid-cols-1">
+        <div class="grid gap-x-8 grid-cols-1">
 
             <?php if ($upload_success) : ?>
             <p role="alert" class="alert alert-success">
@@ -154,20 +154,26 @@ if ($assistant) {
             <h2>Add a file to <em><?php echo $assistant->post_title; ?></em></h2>
             <p>Your assistant will use this file to answer queries.</p>
             <form action="<?php print get_the_permalink(); ?>?AssistantEmbedId=<?php echo $assistant_embed_id; ?>" method="POST" class="max-w-[720px]" enctype="multipart/form-data">
-                <label class="form-control w-full mb-10">
+                <label class="form-control w-full mt-5 mb-10">
                     <div class="label">
                         <span class="label-text"><strong>Title</strong></span>
                     </div>
-                    <input type="text" name="title" placeholder="e.g. 2024 Q1 Sales Report" class="input input-bordered w-full text-sm" />
+                    <div class="indicator w-full">
+                        <input type="text" name="title" placeholder="e.g. 2024 Q1 Sales Report" class="input input-bordered w-full text-sm" />
+                        <span class="indicator-item badge">Required</span>
+                    </div>
                 </label>
                 <label class="form-control w-full mb-10">
                     <div class="label">
                         <span class="label-text"><strong>File</strong></span>
                     </div>
-                    <input type="file" name="file" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.html" /> 
+                    <div class="indicator w-full">
+                        <input type="file" name="file" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt" /> 
+                        <span class="indicator-item badge">Required</span>
+                    </div>
                     <div class="label">
-                        <span class="label-text-alt">Accepted file types: PDF TXT HTML</span>
-                        <span class="label-text-alt">Max 15mb</span>
+                        <span class="label-text-alt">Accepted file types: PDF TXT</span>
+                        <span class="label-text-alt">Max 15MB</span>
                     </div>
                 </label>
                 <p>

@@ -27,7 +27,7 @@ if (strstr($breadcrumbs[0], 'User')) {
 
 ?>
 <div class="container container-fluid bg-base-100 py-2 border-b border-gray-200">
-    <div class="breadcrumbs text-md">
+    <div class="breadcrumbs text-sm">
         <ul>
             <li>
                 <a href="/">Home</a>

@@ -98,20 +98,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
     <div class="container">
-        <div class="grid gap-x-8 gap-y-12 grid-cols-1">
-            <h2>Configure your assistant</h2>
+        <div class="grid gap-x-8 grid-cols-1">
+            <h2>Add and configure your assistant</h2>
             <form action="<?php print get_the_permalink(); ?>" method="POST" class="max-w-[720px]">
-                <label class="form-control w-full mb-10">
+                <label class="form-control w-full mt-5 mb-10">
                     <div class="label">
                         <span class="label-text"><strong>Title/Name</strong></span>
                     </div>
-                    <input type="text" name="title" placeholder="Type here" class="input input-bordered w-full text-sm" />
+                    <div class="indicator w-full">
+                        <input type="text" name="title" placeholder="Type here" class="input input-bordered w-full text-sm" />
+                        <span class="indicator-item badge">Required</span>
+                    </div>
                 </label>
                 <label class="form-control w-full mb-10">
                     <div class="label">
                         <span class="label-text"><strong>Description</strong></span>
                     </div>
-                    <textarea name="description" class="textarea textarea-bordered text-sm h-[100px]" placeholder="You are a helpful assistant specializing in data analysis..."></textarea>    
+                    <div class="indicator w-full">
+                        <textarea name="description" class="textarea textarea-bordered text-sm h-[100px] w-full" placeholder="You are a helpful assistant specializing in data analysis..."></textarea>    
+                        <span class="indicator-item badge">Required</span>
+                    </div>
                 </label>
                 <p>
                     <button type="submit" class="btn btn-neutral">Save</button>
