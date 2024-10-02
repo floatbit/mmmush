@@ -95,7 +95,7 @@
                     &lt;h3&gt;<?php the_title(); ?>&lt;/h3&gt;
                     &lt;div id=&quot;mmmush-chat-container&quot;&gt;&lt;/div&gt;
                 &lt;/div&gt;
-                &lt;script src=&quot;http://mmmush.localhost/embed/thread.js&quot;&gt;&lt;/script&gt;
+                &lt;script src=&quot;http://dashboard.allybox.app/embed/thread.js&quot;&gt;&lt;/script&gt;
                 &lt;script&gt;
                     document.addEventListener(&#39;DOMContentLoaded&#39;, function() {
                         MMMush({
@@ -128,7 +128,7 @@
     <h3><?php the_title(); ?></h3>
     <div id="mmmush-chat-container"></div>
 </div>
-<script src="http://mmmush.localhost/embed/thread.js"></script>
+<script src="http://dashboard.allybox.app/embed/thread.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         MMMush({

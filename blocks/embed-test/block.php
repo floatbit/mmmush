@@ -32,8 +32,8 @@ if ( ! empty( $block['align'] ) ) {
             <h3>Chat with Kudos</h3>
             <div id="mmmush-chat-container"></div>
         </div>
-        <link rel="stylesheet" href="http://mmmush.localhost/embed/styles.css">
-        <script src="http://mmmush.localhost/embed/thread.js"></script>
+        <link rel="stylesheet" href="http://dashboard.allybox.app/embed/styles.css">
+        <script src="http://dashboard.allybox.app/embed/thread.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 console.log('DOMContentLoaded')
