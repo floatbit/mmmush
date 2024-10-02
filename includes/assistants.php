@@ -42,6 +42,7 @@ add_filter( 'query_vars', 'mmmush_query_vars' );
 function mmmush_query_vars( $query_vars ){
     $query_vars[] = 'AssistantId';
     $query_vars[] = 'AssistantEmbedId';
+    
     return $query_vars;
 }
 
