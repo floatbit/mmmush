@@ -85,6 +85,9 @@ async function MMMush(config) {
                 userMessageElement.textContent = message;
                 messagesContainer.appendChild(userMessageElement);
 
+                // Scroll to bottom after adding the user message
+                scrollToBottom();
+
                 // Make an AJAX request to the server
                 fetch(ajaxUrl, {
                     method: 'POST',
@@ -105,6 +108,9 @@ async function MMMush(config) {
                     loadingMessage.classList.add('hidden');
                     submitButton.classList.remove('hidden');
                     messageInput.classList.remove('hidden');
+
+                    // Scroll to bottom after loading is done
+                    scrollToBottom();
                 });
             }
 
@@ -198,5 +204,10 @@ async function MMMush(config) {
                 });
             }
         });
+    }
+
+    function scrollToBottom() {
+        const messagesContainer = document.getElementById('mmmush-chat-messages');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }

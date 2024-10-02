@@ -64,54 +64,11 @@ $assistants = get_posts([
             <div class="card bg-base-100 shadow-lg bg-gray-200">
                 <div class="card-body items-center justify-center">
                     <p class="text-3xl card-title">
-                        <a class="btn btn-lg btn-ghost " href="/user/assistants/create">+ Create New Assistant</a>
+                        <a class="btn btn-lg btn-ghost " href="/user/assistants/create">Create New Assistant</a>
                     </p>                    
                 </div>
             </div>
         </div>
 
-        <table class="table hidden">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Binder</th>
-                    <th>Files</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($assistants as $assistant) : ?>
-                <?php 
-                    $assistant_id = get_field('assistant_id', $assistant->ID);
-                ?>
-                <tr>
-                    <th>
-                        <p><?php echo $assistant->post_title; ?></p>
-                        <p class="font-normal text-gray-500"><?php echo $assistant->post_content; ?></p>
-                    </th>
-                    <th>
-                        <?php 
-                            $vector_store = get_field('vector_stores', $assistant->ID);
-                        ?>
-                        <p class="whitespace-nowrap mt-0"><?php echo $vector_store->post_title; ?></p>
-                    </th>
-                    <th>
-                        <?php 
-                            $files = get_field('files', $vector_store->ID);
-                        ?>
-                        <p class="nowrap">
-                            <?php foreach ($files as $file) : ?>
-                                <?php $the_file = get_field('file', $file->ID); ?>
-
-                                    <a class="btn btn-ghost btn-xs" href="<?php echo $the_file['url']; ?>" target="_blank">
-                                        <?php echo $the_file['title']; ?>
-                                    </a>
-
-                            <?php endforeach; ?>
-                        </p>
-                    </th>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
     </div>
 </div>

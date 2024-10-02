@@ -8,7 +8,7 @@
     <?php wp_head(); ?>
 </head>
 
-<body <?php //body_class('antialiased'); ?>>
+<body <?php body_class('antialiased'); ?>>
 
     <?php get_template_part('parts/section-header'); ?>
     <?php get_template_part('parts/breadcrumbs'); ?>

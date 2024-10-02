@@ -45,6 +45,7 @@
 #mmmush-chat-messages {
     flex: 1;
     overflow-y: auto;
+    padding-bottom: 100px;
 }
 
 #mmmush-chat-form {
