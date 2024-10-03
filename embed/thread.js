@@ -44,7 +44,7 @@ async function allybox(config) {
         const assistantEmbedId = document.querySelector('input[name="assistantEmbedId"]').value;
         try {
             const threadEmbedId = await checkAndCreateThread(assistantEmbedId);
-            console.log('Thread Embed ID:', threadEmbedId);
+            //console.log('Thread Embed ID:', threadEmbedId);
 
             // Show the embed
             embedDiv.style.display = 'flex';
@@ -145,7 +145,7 @@ async function allybox(config) {
                 let i = 0;
                 const type = () => {
                     if (i < htmlContent.length) {
-                        element.innerHTML = htmlContent.substring(0, i + 40);
+                        element.innerHTML = htmlContent.substring(0, i * 5);
                         i++;
                         setTimeout(type, 10); // Adjust typing speed here
                     }
