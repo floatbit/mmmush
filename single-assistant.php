@@ -45,15 +45,19 @@
         <?php endif; ?>
             
         <div>
+            <h2><?php the_title(); ?> <a class="btn btn-xs" href="/user/assistants/edit?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>">Edit</a></h2>
+        </div>
+        <div>
             <h3>Description</h3>
             <?php the_content(); ?>
         </div>
-
-        <?php 
-            $vector_store = get_field('vector_stores', get_the_ID());
-            $files = get_field('files', $vector_store->ID);
-        ?>
         <div>
+
+            <?php 
+                $vector_store = get_field('vector_stores', get_the_ID());
+                $files = get_field('files', $vector_store->ID);
+            ?>
+
             <h3>Files</h3>
             <p>Your assistant will use these files to answer queries.</p>
             <?php if ($files) : ?>
@@ -67,7 +71,7 @@
                             $file_subtype = $the_file['subtype'];
                         ?>  
                         <li class="file">
-                            <a href="<?php echo $file_url; ?>"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>)
+                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>)
                             <form action="<?php print get_the_permalink(); ?>" method="post" class="inline">
                                 <button class="btn btn-xs btn-warning hidden delete-file">Delete</button>
                                 <input type="submit" value="Confirm deletetion" class="btn btn-xs btn-error hidden confirm-delete-file">
@@ -83,26 +87,26 @@
             </p>
             <?php endif; ?>
             <p>
-                <a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-sm">+ Add File</a>
+                <a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-xs">Add File</a>
             </p>
         </div>
         <div>   
             <h3>Embed Code</h3>
             <?php if ($files) : ?>
             <p>You can use this assistant in your website by copying and pasting the following code.</p>
-            <textarea readonly class="textarea textarea-bordered text-sm h-[260px] w-full overflow-hidden">
-                &lt;div id=&quot;allybox-embed&quot;&gt;
-                    &lt;h3&gt;<?php the_title(); ?>&lt;/h3&gt;
-                    &lt;div id=&quot;allybox-chat-container&quot;&gt;&lt;/div&gt;
-                &lt;/div&gt;
-                &lt;script src=&quot;https://dashboard.allybox.app/embed/thread.js&quot;&gt;&lt;/script&gt;
-                &lt;script&gt;
-                    document.addEventListener(&#39;DOMContentLoaded&#39;, function() {
-                        allybox({
-                            assistantEmbedId: &#39;<?php print get_field('assistant_embed_id'); ?>&#39;
-                        });
-                    });
-                &lt;/script&gt;
+            <textarea readonly class="textarea textarea-bordered text-sm h-[280px] w-full overflow-hidden">
+&lt;div id=&quot;allybox-embed&quot;&gt;
+    &lt;h3&gt;<?php the_title(); ?>&lt;/h3&gt;
+    &lt;div id=&quot;allybox-chat-container&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;script src=&quot;https://dashboard.allybox.app/embed/thread.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    document.addEventListener(&#39;DOMContentLoaded&#39;, function() {
+        allybox({
+            assistantEmbedId: &#39;<?php print get_field('assistant_embed_id'); ?>&#39;
+        });
+    });
+&lt;/script&gt;
             </textarea>
             <?php else: ?>
             <p role="alert" class="alert alert-warning">
@@ -121,6 +125,7 @@
             </p>
             <?php endif; ?>
         </div>
+
     </div>
 </div>
 

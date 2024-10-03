@@ -9,4 +9,12 @@
             @apply inline-block;
         }
     }
+
+    .name:hover,
+    .description:hover {
+        .btn {
+            @apply inline-block;
+            line-height: 12px;
+        }
+    }
 }
