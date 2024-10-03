@@ -31,6 +31,7 @@ async function allybox(config) {
                 </div>
             </form>
         </div>
+        <div class="allybox-chat-footer">made on <a href="https://allybox.app">allybox</a></div>
         `;
 
         const form = document.getElementById('allybox-chat-form');

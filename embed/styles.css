@@ -3,7 +3,7 @@
     width: 500px;
     height: 650px;
     border: 1px solid #e0e0e0;
-    padding: 20px;
+    padding: 20px 20px 30px 20px;
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -88,4 +88,11 @@
 }
 #allybox-embed .hidden {
     display: none;
+}
+#allybox-embed .allybox-chat-footer {
+    margin-top: 14px;
+    font-size: 12px;
+    position: absolute;
+    bottom: 5px;
+    right: 20px;
 }

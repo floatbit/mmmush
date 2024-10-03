@@ -128,7 +128,11 @@
     <h3><?php the_title(); ?></h3>
     <div id="allybox-chat-container"></div>
 </div>
-<script src="https://dashboard.allybox.app/embed/thread.js"></script>
+<?php if ($_SERVER['HTTP_HOST'] === 'mmmush.localhost') : ?>
+    <script src="http://mmmush.localhost/embed/thread.js"></script>
+<?php else : ?>
+    <script src="https://dashboard.allybox.app/embed/thread.js"></script>
+<?php endif; ?>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         allybox({
