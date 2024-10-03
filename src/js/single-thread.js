@@ -9,6 +9,8 @@ export default class SingleThread {
     this.loadingMessage = this.form.querySelector('.loading');
     this.ajaxUrl = '/wp-admin/admin-ajax.php'; // Hardcoded admin-ajax.php URL
     this.init();
+
+    this.ttt();
   }
 
   init() {
@@ -106,9 +108,46 @@ export default class SingleThread {
       if (i < htmlContent.length) {
         element.innerHTML = htmlContent.substring(0, i + 1);
         i++;
-        setTimeout(type, 10); // Adjust typing speed here
+        setTimeout(type, 0); // Adjust typing speed here
       }
     };
     type();
   }
+
+  ttt() {
+   
+    console.log('ttt');
+    // Define the WordPress AJAX endpoint with SSE action
+    const url = '/wp-admin/admin-ajax.php?action=my_sse_event';
+
+    // Use EventSource to listen to server-sent events (SSE)
+    const eventSource = new EventSource(url);
+
+    // Log each individual event as it's received
+    eventSource.onmessage = function (event) {
+        console.log('Received message:', event.data);
+    };
+
+    eventSource.addEventListener('delta', function(e) {
+        console.log('Received delta event:', e.data);
+    }, false);
+
+    // Optionally handle specific event types (like "javascript")
+    eventSource.addEventListener('javascript', function (event) {
+        console.log('Received javascript event:', event.data);
+        try {
+            eval(event.data); // Execute any JS received from the server
+        } catch (err) {
+            console.error('Error executing JS:', err);
+        }
+    }, false);
+
+    // Handle connection errors
+    eventSource.onerror = function (error) {
+        console.error('EventSource failed:', error);
+    };
+
+
+  }
+
 }

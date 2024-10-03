@@ -462,3 +462,27 @@ function create_new_thread() {
 }
 add_action('wp_ajax_create_new_thread', 'create_new_thread');
 add_action('wp_ajax_nopriv_create_new_thread', 'create_new_thread');
+
+
+
+add_action('wp_ajax_my_sse_event', 'handle_sse_event');
+add_action('wp_ajax_nopriv_my_sse_event', 'handle_sse_event');
+
+function handle_sse_event() {
+    header('Content-Type: text/event-stream');
+    header('Cache-Control: no-cache'); // Recommended for SSE
+    header('Connection: keep-alive');
+    header('X-Accel-Buffering: no');
+
+    for ($i = 1; $i <= 5; $i++) {
+        $time = date('Y-m-d H:i:s');
+        echo "data: SSE $time Update #{$i}\n\n";
+        ob_flush(); // Send the buffer to the client
+        flush(); // Ensure it is sent to the browser immediately
+        sleep(1); // Simulate some delay between events
+    }
+
+    // Close the connection once done
+    die();
+    exit;
+}

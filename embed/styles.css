@@ -13,11 +13,9 @@
     flex-direction: column;
     display: none;
 }
-
 #allybox-embed a {
     text-decoration: underline;
 }
-
 #allybox-embed p,
 #allybox-embed ol, 
 #allybox-embed ul {
@@ -34,29 +32,24 @@
     margin-top: 0;
     font-size: 18px;
 }
-
 #allybox-chat-container {
     display: flex;
     flex-direction: column;
     height: calc(100% - 40px);
     flex-wrap: wrap;
 }
-
 #allybox-chat-messages {
     flex: 1;
     overflow-y: auto;
     padding-bottom: 100px;
 }
-
 #allybox-chat-form {
     display: flex;
     align-items: flex-end;
 }
-
 #allybox-embed .textarea-container {
     width: 100%;
 }
-
 #allybox-embed textarea {
     font-size: 14px;
     width: calc(100% - 10px);
@@ -67,7 +60,6 @@
     position: relative;
     top: 4px;
 }
-
 #allybox-embed button {
     background-color: #000;
     color: #fff;
@@ -76,25 +68,24 @@
     border-radius: 5px;
     cursor: pointer;
 }
-
 #allybox-embed .message {
     margin: 0 0 15px 0;
     padding: 10px 16px;
     border-radius: 10px;
 }
-
 #allybox-embed .message.user {
     background-color: #0693e3;
     color: #fff;
     margin-right: 40px;
 }
-
 #allybox-embed .message.assistant {
     background-color: #e0e0e0;
     margin-left: 40px;
     margin-right: 20px;
 }
-
+#allybox-embed .message h3 {
+    font-size: 16px;
+}
 #allybox-embed .hidden {
     display: none;
 }
