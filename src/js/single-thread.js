@@ -9,8 +9,6 @@ export default class SingleThread {
     this.loadingMessage = this.form.querySelector('.loading');
     this.ajaxUrl = '/wp-admin/admin-ajax.php'; // Hardcoded admin-ajax.php URL
     this.init();
-
-    this.ttt();
   }
 
   init() {
@@ -113,24 +111,4 @@ export default class SingleThread {
     };
     type();
   }
-
-  ttt() {
-   
-    console.log('ttt');
-    
-    const eventSource = new EventSource('/sse-endpoint/');
-
-// Log each event as it's received
-eventSource.onmessage = function(event) {
-    console.log('Received message:', event.data);
-    };
-
-    // Handle connection errors
-    eventSource.onerror = function(error) {
-      console.error('EventSource failed:', error);
-    };
-
-
-  }
-
 }

@@ -6,33 +6,7 @@ require_once get_template_directory() . '/vendor/autoload.php';
 // Include the secrets file
 require_once get_template_directory() . '/includes/secrets.php';
 
-
-
-// SSE TEST
-
-add_action('init', 'register_sse_endpoint');
-
-function register_sse_endpoint() {
-    add_rewrite_rule('^sse-endpoint/?', 'index.php?sse=1', 'top');
-}
-
-
-// add query vars
-add_filter( 'query_vars', 'mmmush_query_vars' );
-function mmmush_query_vars( $query_vars ){
-    $query_vars[] = 'sse';
-    $query_vars[] = 'AssistantId';
-    $query_vars[] = 'AssistantEmbedId';
-    
-    return $query_vars;
-}
-
 add_action('template_redirect', function() {
-    if (get_query_var('sse') == 1) {
-        // Ensure no WordPress headers are sent
-        handle_sse_event();
-        exit;
-    }
     $post = get_post();
     // user not logged in - go to login url
     if (!is_user_logged_in()) {
@@ -63,6 +37,14 @@ function mmmush_debug($input) {
     file_put_contents($log_file, $log_message . PHP_EOL, FILE_APPEND);
 }
 
+// add query vars
+add_filter( 'query_vars', 'mmmush_query_vars' );
+function mmmush_query_vars( $query_vars ){
+    $query_vars[] = 'AssistantId';
+    $query_vars[] = 'AssistantEmbedId';
+    
+    return $query_vars;
+}
 
 // login redirect
 add_filter('login_redirect', 'mmmush_custom_login_redirect', 10, 3);
@@ -480,33 +462,3 @@ function create_new_thread() {
 }
 add_action('wp_ajax_create_new_thread', 'create_new_thread');
 add_action('wp_ajax_nopriv_create_new_thread', 'create_new_thread');
-
-
-
-
-function handle_sse_event() {
-    // Disable any kind of output buffering
-    while (ob_get_level() > 0) {
-        ob_end_flush();
-    }
-
-    // Set the headers for SSE
-    header('Content-Type: text/event-stream');
-    header('Cache-Control: no-cache');
-    header('Connection: keep-alive');
-    header('X-Accel-Buffering: no'); // For Nginx to disable buffering
-
-    // Turn off implicit flush for the script
-    if (function_exists('ob_implicit_flush')) ob_implicit_flush(true);
-    @ini_set('zlib.output_compression', 'Off'); // Disable Gzip compression if enabled
-
-    // Send SSE events in a loop
-    for ($i = 1; $i <= 10; $i++) {
-        echo "data: SSE Update #{$i}\n\n"; // Send each SSE message
-        flush(); // Ensure the data is sent immediately
-        sleep(1); // Delay 0.5 seconds between updates
-    }
-
-    // End the connection properly
-    exit;
-}
