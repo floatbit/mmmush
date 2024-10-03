@@ -117,34 +117,17 @@ export default class SingleThread {
   ttt() {
    
     console.log('ttt');
-    // Define the WordPress AJAX endpoint with SSE action
-    const url = '/wp-admin/admin-ajax.php?action=my_sse_event';
+    
+    const eventSource = new EventSource('/sse-endpoint/');
 
-    // Use EventSource to listen to server-sent events (SSE)
-    const eventSource = new EventSource(url);
-
-    // Log each individual event as it's received
-    eventSource.onmessage = function (event) {
-        console.log('Received message:', event.data);
+// Log each event as it's received
+eventSource.onmessage = function(event) {
+    console.log('Received message:', event.data);
     };
 
-    eventSource.addEventListener('delta', function(e) {
-        console.log('Received delta event:', e.data);
-    }, false);
-
-    // Optionally handle specific event types (like "javascript")
-    eventSource.addEventListener('javascript', function (event) {
-        console.log('Received javascript event:', event.data);
-        try {
-            eval(event.data); // Execute any JS received from the server
-        } catch (err) {
-            console.error('Error executing JS:', err);
-        }
-    }, false);
-
     // Handle connection errors
-    eventSource.onerror = function (error) {
-        console.error('EventSource failed:', error);
+    eventSource.onerror = function(error) {
+      console.error('EventSource failed:', error);
     };
 
 
