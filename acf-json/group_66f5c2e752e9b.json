@@ -20,7 +20,7 @@
             "library": "all",
             "min_size": "",
             "max_size": "",
-            "mime_types": "pdf, txt, html",
+            "mime_types": "pdf, txt, html, json",
             "allow_in_bindings": 0
         },
         {
@@ -63,5 +63,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1727832925
+    "modified": 1727922017
 }

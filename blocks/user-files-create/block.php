@@ -168,11 +168,11 @@ if ($assistant) {
                         <span class="label-text"><strong>File</strong></span>
                     </div>
                     <div class="indicator w-full">
-                        <input type="file" name="file" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt" /> 
+                        <input type="file" name="file" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.json" /> 
                         <span class="indicator-item badge">Required</span>
                     </div>
                     <div class="label">
-                        <span class="label-text-alt">Accepted file types: PDF TXT</span>
+                        <span class="label-text-alt">Accepted file types: PDF TXT JSON</span>
                         <span class="label-text-alt">Max 15MB</span>
                     </div>
                 </label>
