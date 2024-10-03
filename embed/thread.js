@@ -31,7 +31,7 @@ async function allybox(config) {
                 </div>
             </form>
         </div>
-        <div class="allybox-chat-footer">made on <a href="https://allybox.app">allybox</a></div>
+        <div class="allybox-chat-footer">made on <a href="https://allybox.app" target="_blank">allybox</a></div>
         `;
 
         const form = document.getElementById('allybox-chat-form');
@@ -145,7 +145,7 @@ async function allybox(config) {
                 let i = 0;
                 const type = () => {
                     if (i < htmlContent.length) {
-                        element.innerHTML = htmlContent.substring(0, i + 1);
+                        element.innerHTML = htmlContent.substring(0, i + 40);
                         i++;
                         setTimeout(type, 10); // Adjust typing speed here
                     }
