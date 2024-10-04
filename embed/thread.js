@@ -24,11 +24,11 @@ async function allybox(config) {
                 <div class="textarea-container">
                     <textarea id="allybox-message-input" name="message" placeholder="Ask me about"></textarea>
                 </div>
-                <input type="hidden" name="assistantEmbedId" value="${config.assistantEmbedId}">
                 <div class="text-right">
                     <button type="submit">Send</button>
                     <span class="loading hidden">......</span>
                 </div>
+                <input type="hidden" name="assistantEmbedId" value="${config.assistantEmbedId}">
             </form>
         </div>
         <div class="allybox-chat-footer">made on <a href="https://allybox.app" target="_blank">allybox</a></div>
@@ -39,12 +39,12 @@ async function allybox(config) {
         const messageInput = document.getElementById('allybox-message-input');
         const submitButton = form.querySelector('button[type="submit"]');
         const loadingMessage = form.querySelector('.loading');
-        const ajaxUrl = `${BASE_URL}/wp-admin/admin-ajax.php`;
+        const endpoint = `${BASE_URL}/am-endpoint/`;
 
         const assistantEmbedId = document.querySelector('input[name="assistantEmbedId"]').value;
         try {
             const threadEmbedId = await checkAndCreateThread(assistantEmbedId);
-            //console.log('Thread Embed ID:', threadEmbedId);
+            console.log('Thread Embed ID:', threadEmbedId);
 
             // Show the embed
             embedDiv.style.display = 'flex';
@@ -55,7 +55,7 @@ async function allybox(config) {
             });
 
             messageInput.addEventListener('keydown', (event) => {
-                if (event.shiftKey && event.key === 'Enter') {
+                if ((event.shiftKey || event.metaKey) && event.key === 'Enter') {
                     event.preventDefault();
                     if (messageInput.value.trim() !== '') {
                         sendMessage();
@@ -64,94 +64,65 @@ async function allybox(config) {
             });
 
             function sendMessage() {
+                if (!loadingMessage.classList.contains('hidden')) return; // Check if loading is active
+
                 const formData = new FormData(form);
                 const assistantEmbedId = formData.get('assistantEmbedId');
-                const message = formData.get('message');
+                const message = formData.get('message').trim();
 
-                if (message.trim() === '') {
-                    return; // Do nothing if the message is empty
-                }
+                if (!message) return;
 
-                // Clear out the textarea message
                 messageInput.value = '';
+                toggleLoading(true);
 
-                // Show the loading message and hide submit button
-                messageInput.classList.add('hidden');
-                loadingMessage.classList.remove('hidden');
-                submitButton.classList.add('hidden');
+                addMessage('user', message);
 
-                // Add user message to the chat
-                const userMessageElement = document.createElement('div');
-                userMessageElement.className = 'message user';
-                userMessageElement.textContent = message;
-                messagesContainer.appendChild(userMessageElement);
+                const element = addMessage('assistant', '');
+                const url = `${endpoint}?ThreadEmbedId=${threadEmbedId}&AssistantEmbedId=${assistantEmbedId}&message=${encodeURIComponent(message)}`;
+                const eventSource = new EventSource(url);
 
-                // Scroll to bottom after adding the user message
                 scrollToBottom();
 
-                // Make an AJAX request to the server
-                fetch(ajaxUrl, {
-                    method: 'POST',
-                    body: new URLSearchParams({
-                        action: 'embed_send_message',
-                        AssistantEmbedId: assistantEmbedId,
-                        ThreadEmbedId: threadEmbedId,
-                        message: message
-                    }),
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                }).then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    handleStream(response.body);
-                }).finally(() => {
-                    // Hide loading message and show submit button
-                    loadingMessage.classList.add('hidden');
-                    submitButton.classList.remove('hidden');
-                    messageInput.classList.remove('hidden');
-
-                    // Scroll to bottom after loading is done
-                    scrollToBottom();
-                });
-            }
-
-            function handleStream(stream) {
-                const reader = stream.getReader();
-                const decoder = new TextDecoder();
-
-                reader.read().then(function processText({ done, value }) {
-                    if (done) {
-                        return;
-                    }
-
-                    const text = decoder.decode(value, { stream: true });
-                    const eventData = JSON.parse(text.replace('data: ', '').trim());
-                    const message = eventData.message;
-
-                    // Update the message container with typewriter effect
-                    typeWriterEffect(message);
-
-                    // Read the next chunk of the stream
-                    return reader.read().then(processText.bind(this));
-                }.bind(this));
-            }
-
-            function typeWriterEffect(text) {
-                const element = document.createElement('div');
-                element.className = 'message assistant';
-                messagesContainer.appendChild(element);
-
-                const htmlContent = marked.parse(text);
-                let i = 0;
-                const type = () => {
-                    if (i < htmlContent.length) {
-                        element.innerHTML = htmlContent.substring(0, i * 5);
-                        i++;
-                        setTimeout(type, 10); // Adjust typing speed here
+                let fullMessage = '';
+                eventSource.onmessage = (event) => {
+                    const eventData = JSON.parse(event.data.replace('data: ', '').trim());
+                    if (eventData.event === 'message') {
+                        fullMessage += eventData.message;
+                        element.innerHTML = marked.parse(fullMessage);
+                    } else if (eventData.event === 'complete') {
+                        handleComplete(eventSource);
                     }
                 };
-                type();
+
+                eventSource.onerror = () => handleError(eventSource);
             }
+
+            function addMessage(type, content) {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${type}`;
+                messageElement.textContent = content;
+                messagesContainer.appendChild(messageElement);
+                return messageElement;
+            }
+
+            function toggleLoading(isLoading) {
+                loadingMessage.classList.toggle('hidden', !isLoading);
+                submitButton.classList.toggle('hidden', isLoading);
+            }
+
+            function handleComplete(eventSource) {
+                console.log('Stream completed');
+                eventSource.close();
+                toggleLoading(false);
+            }
+
+            function handleError(eventSource) {
+                console.error('EventSource failed');
+                eventSource.close();
+                toggleLoading(false);
+            }
+
+            
         } catch (error) {
             console.error('Error:', error);
         }

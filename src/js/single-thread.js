@@ -7,7 +7,6 @@ export default class SingleThread {
     this.messageInput = document.getElementById('message-input');
     this.submitButton = this.form.querySelector('button[type="submit"]');
     this.loadingMessage = this.form.querySelector('.loading');
-    this.ajaxUrl = '/wp-admin/admin-ajax.php';
     this.init();
   }
 

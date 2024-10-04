@@ -28,19 +28,21 @@ if ( ! empty( $block['align'] ) ) {
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
     <div class="container">
-        <div id="mmmush-embed">
-            <h3>Chat with Kudos</h3>
-            <div id="mmmush-chat-container"></div>
+
+
+        <div id="allybox-embed">
+            <h3>Earnings Report Analyzer</h3>
+            <div id="allybox-chat-container"></div>
         </div>
-        <link rel="stylesheet" href="https://dashboard.allybox.app/embed/styles.css">
-        <script src="https://dashboard.allybox.app/embed/thread.js"></script>
+        <script src="http://mmmush.localhost/embed/thread.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOMContentLoaded')
-                MMMush({
-                    threadId: 'thread_yTieSiVGrw5ovoNx9RCv8tlc'
+                allybox({
+                    assistantEmbedId: '66fca2f5e0d97'
                 });
             });
         </script>
+                
+
     </div>
 </div>
