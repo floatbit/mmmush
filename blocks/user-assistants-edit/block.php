@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     stroke-width="2"
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span><em><?php print $title;?></em> updated</span>
+                <span><em><a href="<?php print get_the_permalink($assistant->ID); ?>?<?php print $assistant_embed_id; ?>"><?php print $title;?></a></em> updated</span>
             </p>
             <?php endif;?>
             <h2>Edit your assistant</h2>

@@ -17,4 +17,11 @@
             line-height: 12px;
         }
     }
+
+    #allybox-embed {
+        height: calc(100vh - 200px);
+        min-height: 650px;
+        top: 140px;
+        right: 20px;
+    }
 }
