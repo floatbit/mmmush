@@ -28,6 +28,10 @@
 #allybox-embed ul {
     list-style-type: disc;
 }
+#allybox-embed ul li::marker,
+#allybox-embed ol li::marker {
+    display: none;
+}
 #allybox-embed h3 {
     margin-top: 0;
     font-size: 18px;
