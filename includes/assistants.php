@@ -242,6 +242,7 @@ add_action('wp_trash_post', function($post_id) {
     }
 });
 
+/*
 add_action('wp_ajax_send_message', 'handle_send_message');
 add_action('wp_ajax_nopriv_send_message', 'handle_send_message');
 
@@ -425,6 +426,7 @@ function handle_embed_send_message() {
     // End the connection when streaming is done
     exit;
 }
+*/
 
 function mmmush_create_default_thread($assistant_id, $assistant_post) {
     $client = OpenAI::client(CHATGPT_API_KEY);
@@ -550,15 +552,30 @@ function mmmush_handle_am_event() {
         threadId: $thread_id,
         parameters: [
             'assistant_id' => $assistant_id,
+            'temperature' => 0.5,
         ],
     );
     
+    $in_progress = false;
+
     foreach($stream as $response) {
+        if ($response->event === 'thread.run.created') {
+            $run_id = $response->response->id;
+        }
+        if ($response->event === 'thread.run.in_progress') {
+            $in_progress = true;
+        }
         if ($response->event === 'thread.message.delta') {
-            $eventData = json_encode([
+            //mmmush_debug($response);
+            $delta_message = [
                 'event' => 'message',
                 'message' => $response->response->delta->content[0]->text->value,
-            ]);
+            ];
+            if ($in_progress) {
+                $delta_message['run_id'] = $run_id;
+            }
+            $eventData = json_encode($delta_message);
+
             echo "data: {$eventData}" . PHP_EOL . PHP_EOL;
             echo str_pad('', 8186) . PHP_EOL;
             flush();
@@ -566,5 +583,28 @@ function mmmush_handle_am_event() {
     }
     echo "data: {\"event\": \"complete\", \"message\": \"Stream completed\"}" . PHP_EOL . PHP_EOL;
     flush();
+    exit;
+}
+
+add_action('wp_ajax_stop_run', 'stop_run');
+add_action('wp_ajax_nopriv_stop_run', 'stop_run');
+
+function stop_run() {
+    $run_id = $_POST['RunId'];
+    $thread_embed_id = $_POST['ThreadEmbedId'];
+
+    // find thread post by thread embed id
+    $thread_post = get_posts(array(
+        'numberposts' => -1,
+        'post_type'   => 'thread',
+        'meta_key'    => 'thread_embed_id',
+        'meta_value'  => $thread_embed_id
+    ))[0];
+    
+    $thread_id = get_field('thread_id', $thread_post->ID);
+
+    $client = OpenAI::client(CHATGPT_API_KEY);
+    $response = $client->threads()->runs()->cancel($thread_id, $run_id);
+    mmmush_debug($response);
     exit;
 }

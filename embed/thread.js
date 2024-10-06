@@ -26,7 +26,10 @@ async function allybox(config) {
                 </div>
                 <div class="text-right">
                     <button type="submit">Send</button>
-                    <span class="loading hidden">......</span>
+                    <div class="loader hidden">
+                        <span class="spinner"></span>
+                        <span class="stop-message hidden"></span>
+                    </div>
                 </div>
                 <input type="hidden" name="assistantEmbedId" value="${config.assistantEmbedId}">
             </form>
@@ -38,20 +41,27 @@ async function allybox(config) {
         const messagesContainer = document.getElementById('allybox-chat-messages');
         const messageInput = document.getElementById('allybox-message-input');
         const submitButton = form.querySelector('button[type="submit"]');
-        const loadingMessage = form.querySelector('.loading');
+        const loadingMessage = form.querySelector('.loader');
         const endpoint = `${BASE_URL}/am-endpoint/`;
-
+        const stopMessage = form.querySelector('.stop-message');
         const assistantEmbedId = document.querySelector('input[name="assistantEmbedId"]').value;
+        let eventSource = null;
+        let runId = null;
+        
         try {
             const threadEmbedId = await checkAndCreateThread(assistantEmbedId);
-            console.log('Thread Embed ID:', threadEmbedId);
+            //console.log('Thread Embed ID:', threadEmbedId);
 
             // Show the embed
             embedDiv.style.display = 'flex';
 
             form.addEventListener('submit', (event) => {
                 event.preventDefault();
-                sendMessage();
+                if (messageInput.value.trim() === '') {
+                    messageInput.focus();
+                } else {
+                    sendMessage();
+                }
             });
 
             messageInput.addEventListener('keydown', (event) => {
@@ -63,8 +73,15 @@ async function allybox(config) {
                 }
             });
 
+            stopMessage.addEventListener('click', () => {
+                //console.log('Stop message clicked');
+                stopRun();
+            });
+            
             function sendMessage() {
-                if (!loadingMessage.classList.contains('hidden')) return; // Check if loading is active
+                if (!loadingMessage.classList.contains('hidden')) {
+                    return; // Check if loading is active
+                }
 
                 const formData = new FormData(form);
                 const assistantEmbedId = formData.get('assistantEmbedId');
@@ -79,7 +96,7 @@ async function allybox(config) {
 
                 const element = addMessage('assistant', '');
                 const url = `${endpoint}?ThreadEmbedId=${threadEmbedId}&AssistantEmbedId=${assistantEmbedId}&message=${encodeURIComponent(message)}`;
-                const eventSource = new EventSource(url);
+                eventSource = new EventSource(url);
 
                 scrollToBottom();
 
@@ -89,6 +106,10 @@ async function allybox(config) {
                     if (eventData.event === 'message') {
                         fullMessage += eventData.message;
                         element.innerHTML = marked.parse(fullMessage);
+                        stopMessage.classList.remove('hidden');
+                        if (eventData.run_id) {
+                            runId = eventData.run_id;
+                        }
                     } else if (eventData.event === 'complete') {
                         handleComplete(eventSource);
                     }
@@ -108,19 +129,52 @@ async function allybox(config) {
             function toggleLoading(isLoading) {
                 loadingMessage.classList.toggle('hidden', !isLoading);
                 submitButton.classList.toggle('hidden', isLoading);
+                if (isLoading === false) {
+                    stopMessage.classList.add('hidden');
+                }
             }
 
             function handleComplete(eventSource) {
-                console.log('Stream completed');
+                //console.log('Stream completed');
                 eventSource.close();
+                runId = null;
                 toggleLoading(false);
             }
 
             function handleError(eventSource) {
-                console.error('EventSource failed');
+                //console.error('EventSource failed');
                 eventSource.close();
+                runId = null;
                 toggleLoading(false);
             }
+
+            function stopRun() {
+                if (runId) {
+                    fetch(`${BASE_URL}/wp-admin/admin-ajax.php`, {
+                        method: 'POST',
+                        body: new URLSearchParams({
+                            action: 'stop_run',
+                            RunId: runId,
+                            ThreadEmbedId: threadEmbedId
+                        }),
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        eventSource.close();
+                        runId = null;
+                        toggleLoading(false);
+                    })
+                    .catch(error => {
+                        console.error('Error stopping run:', error);
+                    });
+                }
+            }
+
 
             
         } catch (error) {
