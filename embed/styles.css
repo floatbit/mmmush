@@ -28,12 +28,18 @@
 #allybox-embed ul {
     list-style-type: disc;
 }
-/* #allybox-embed ul ul li::marker,
+#allybox-embed ul ul,
+#allybox-embed ol ol,
+#allybox-embed ol ul,
+#allybox-embed ul ol {
+    padding-left: 0;
+}
+#allybox-embed ul ul li::marker,
 #allybox-embed ol ol li::marker,
 #allybox-embed ol ul li::marker,
 #allybox-embed ul ol li::marker {
     content: none;
-} */
+}
 #allybox-embed h3 {
     margin-top: 0;
     font-size: 18px;
