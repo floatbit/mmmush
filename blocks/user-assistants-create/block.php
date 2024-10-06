@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="label-text"><strong>Description</strong></span>
                     </div>
                     <div class="indicator w-full">
-                        <textarea name="description" class="textarea textarea-bordered text-sm h-[100px] w-full" placeholder="You are a helpful assistant specializing in data analysis..."></textarea>    
+                        <textarea name="description" class="textarea textarea-bordered text-sm h-[300px] w-full" placeholder="You are a helpful assistant specializing in data analysis..."></textarea>    
                         <span class="indicator-item badge">Required</span>
                     </div>
                 </label>

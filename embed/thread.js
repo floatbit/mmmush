@@ -105,7 +105,8 @@ async function allybox(config) {
                     const eventData = JSON.parse(event.data.replace('data: ', '').trim());
                     if (eventData.event === 'message') {
                         fullMessage += eventData.message;
-                        element.innerHTML = marked.parse(fullMessage);
+                        const cleanedMessage = removeSourceTags(fullMessage);
+                        element.innerHTML = marked.parse(cleanedMessage);
                         stopMessage.classList.remove('hidden');
                         if (eventData.run_id) {
                             runId = eventData.run_id;
@@ -235,5 +236,12 @@ async function allybox(config) {
     function scrollToBottom() {
         const messagesContainer = document.getElementById('allybox-chat-messages');
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function removeSourceTags(input) {
+        // Regular expression to match the pattern 【number:number†source】
+        const regex = /【\d+:\d+†source】/g;
+        // Replace the matched pattern with an empty string
+        return input.replace(regex, '');
     }
 }
