@@ -29,8 +29,10 @@
     list-style-type: disc;
 }
 #allybox-embed ul ul li::marker,
-#allybox-embed ol ol li::marker {
-    display: none;
+#allybox-embed ol ol li::marker,
+#allybox-embed ol ul li::marker,
+#allybox-embed ul ol li::marker {
+        display: none;
     content: none;
 }
 #allybox-embed h3 {
