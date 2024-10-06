@@ -45,7 +45,9 @@ $assistants = get_posts([
             <div class="card bg-base-100 shadow-lg">
                 <div class="card-body min-h-[360px]">
                     <h2 class="card-title mt-0"><?php echo $assistant->post_title; ?></h2>
-                    <p class="font-normal text-gray-500"><?php echo $assistant->post_content; ?></p>
+                    <div class="description mb-10">
+                        <p class="font-normal text-gray-500"><?php echo $assistant->post_content; ?></p>
+                    </div>
                     <div>
                         <p class="hidden"><span class="font-bold">Binder</span><br> <?php echo $vector_store->post_title; ?></p>
                         <?php if (is_array($files) && count($files) > 0) {

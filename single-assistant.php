@@ -64,7 +64,7 @@
                             $the_file = get_field('file', $file->ID);
                             $file_url = $the_file['url'];
                             $file_name = $the_file['name'];
-                            $file_subtype = $the_file['subtype'];
+                            $file_subtype = pathinfo($file_url, PATHINFO_EXTENSION);
                         ?>  
                         <li class="file">
                             <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>)
