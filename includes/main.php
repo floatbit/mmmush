@@ -33,16 +33,15 @@ add_action('after_setup_theme', function () {
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('app', assets_url('/dist/app.css'), [], null);
     wp_enqueue_script('app', assets_url('/dist/app.js'), ['jquery'], null, true);
-
-    // Register script for blocks
-    // If needed, separate the script per block
-    // wp_register_script('blocks/text', assets_url('/dist/blocks/text.js'), ['jquery'], null, true);
 });
 
-function my_custom_login_styles() {
+/**
+ * Custom login styles
+ */
+function mmmush_custom_login_styles() {
     wp_enqueue_style('app', assets_url('/dist/app.css'), [], null);
 }
-add_action('login_enqueue_scripts', 'my_custom_login_styles');
+add_action('login_enqueue_scripts', 'mmmush_custom_login_styles');
 
 /**
  * Disable Gutenberg for specific post types
@@ -59,6 +58,10 @@ function mmmush_disable_gutenberg_for_post_types($can_edit, $post_type) {
 }
 add_filter('use_block_editor_for_post_type', 'mmmush_disable_gutenberg_for_post_types', 10, 2);
 
+/**
+ * Disable sitemap
+ */
+add_filter( 'wp_sitemaps_enabled', '__return_false' );
 
 function pr($array) {
     echo '<pre>';
@@ -70,3 +73,11 @@ function pd($array) {
     pr($array);
     die();
 }   
+
+function pdebug($input) {
+    $log_file = $_SERVER['DOCUMENT_ROOT'] . '/logs/' . date('Y-m-d') . '.log';
+    $log_message = is_string($input) ? $input : print_r($input, true);
+    $log_message = "\n==================\n\n" . $log_message;;
+    file_put_contents($log_file, $log_message . PHP_EOL, FILE_APPEND);
+}
+

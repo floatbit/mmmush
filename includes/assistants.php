@@ -6,9 +6,11 @@ require_once get_template_directory() . '/vendor/autoload.php';
 // Include the secrets file
 require_once get_template_directory() . '/includes/secrets.php';
 
+define('MMUSH_FIXED_INSTRUCTIONS', ' Respond to queries without including any citations, references, or text inside brackets (e.g., [source]), and without indicating source numbers or references of any kind. Do not include any concluding statements, such as offering suggestions, asking for feedback, or inviting further questions.');
+
 add_action('template_redirect', function() {
+    // callback for assistant message
     if (get_query_var('am') == 1) {
-        // Ensure no WordPress headers are sent
         mmmush_handle_am_event();
         exit;
     }
@@ -32,16 +34,6 @@ add_action('template_redirect', function() {
         }
     }
 });
-
-// Disable sitemap
-add_filter( 'wp_sitemaps_enabled', '__return_false' );
-
-function mmmush_debug($input) {
-    $log_file = $_SERVER['DOCUMENT_ROOT'] . '/logs/' . date('Y-m-d') . '.log';
-    $log_message = is_string($input) ? $input : print_r($input, true);
-    $log_message = "\n==================\n\n" . $log_message;;
-    file_put_contents($log_file, $log_message . PHP_EOL, FILE_APPEND);
-}
 
 // add query vars
 add_filter( 'query_vars', 'mmmush_query_vars' );
@@ -242,192 +234,6 @@ add_action('wp_trash_post', function($post_id) {
     }
 });
 
-/*
-add_action('wp_ajax_send_message', 'handle_send_message');
-add_action('wp_ajax_nopriv_send_message', 'handle_send_message');
-
-function handle_send_message() {
-    
-    ob_implicit_flush( true );
-    ob_end_flush();  
-
-    // Set headers for Server-Sent Events
-    header( 'Cache-Control: no-cache' );
-    header( 'Connection: keep-alive' );
-    header( 'Content-Type: text/event-stream' );
-    header( 'X-Accel-Buffering: no' );
-  
-    // Get the POST data
-    $thread_id = $_POST['ThreadId'];
-    $assistant_id = $_POST['AssistantId'];
-    $message = $_POST['message'];
-
-    // Create OpenAI client
-    $client = OpenAI::client(CHATGPT_API_KEY);
-
-    // Create a message in the thread
-    $client->threads()->messages()->create($thread_id, [
-        'role' => 'user',
-        'content' => $message,
-    ]);
-
-    // Create and start a run
-    $stream = $client->threads()->runs()->createStreamed(
-        threadId: $thread_id,
-        parameters: [
-            'assistant_id' => $assistant_id,
-        ],
-    );
-    
-    foreach($stream as $response) {
-        if ($response->event === 'thread.message.delta') {
-            $eventData = json_encode([
-                'event' => 'message',
-                'message' => str_replace("\n", "_", $response->response->delta->content[0]->text->value),
-            ]);
-            echo "data: {$eventData}" . PHP_EOL . PHP_EOL;
-            echo str_pad('', 8186) . PHP_EOL;
-            // $value = $response->response->delta->content[0]->text->value;
-            // $value = $value;
-            // echo "data: $value " . PHP_EOL . PHP_EOL;
-            // echo str_pad('', 8186) . PHP_EOL;
-            // ob_end_flush();
-            flush();
-        }
-    }
-    // // Poll for run completion and stream the results
-    // while (true) {
-    //     $run = $client->threads()->runs()->retrieve($thread_id, $run->id);
-    //     mmmush_debug($run);
-    //     if ($run->status === 'completed') {
-    //         // Retrieve and send the assistant's response
-    //         $messages = $client->threads()->messages()->list($thread_id);
-    //         foreach ($messages->data as $msg) {
-    //             if ($msg->role === 'assistant') {
-    //                 $eventData = json_encode([
-    //                     'event' => 'message',
-    //                     'message' => $msg->content[0]->text->value,
-    //                 ]);
-    //                 mmmush_debug($eventData);
-    //                 echo "data: {$eventData}\n\n";
-    //                 flush();
-    //                 break; // Only send the latest assistant message
-    //             }
-    //         }
-    //         break;
-    //     } elseif (in_array($run->status, ['failed', 'cancelled', 'expired'])) {
-    //         $eventData = json_encode([
-    //             'event' => 'error',
-    //             'message' => 'Run failed: ' . $run->status,
-    //         ]);
-    //         mmmush_debug($eventData);
-    //         echo "data: {$eventData}\n\n";
-    //         flush();
-    //         break;
-    //     }
-
-    //     // Wait before polling again
-    //     sleep(1);
-    // }
-
-    // End the connection when streaming is done
-    exit;
-}
-
-add_action('wp_ajax_embed_send_message', 'handle_embed_send_message');
-add_action('wp_ajax_nopriv_embed_send_message', 'handle_embed_send_message');
-
-function handle_embed_send_message() {
-    mmmush_debug('embed_handle_send_message');
-    // Ensure output buffering is turned off
-    if (ob_get_length()) {
-        ob_end_clean();
-    }
-
-    // Set headers for Server-Sent Events
-    header('Content-Type: text/event-stream');
-    header('Cache-Control: no-cache');
-    header('Connection: keep-alive');
-
-    // Get the POST data
-    $thread_embed_id = $_POST['ThreadEmbedId'];
-    mmmush_debug($thread_embed_id);
-
-    // find thread post by thread embed id
-    $thread_post = get_posts(array(
-        'numberposts' => -1,
-        'post_type'   => 'thread',
-        'meta_key'    => 'thread_embed_id',
-        'meta_value'  => $thread_embed_id
-    ))[0];
-    
-    $thread_id = get_field('thread_id', $thread_post->ID);
-
-    // find assistant post by thread id
-    $thread_post = get_posts(array(
-        'numberposts' => -1,
-        'post_type'   => 'thread',
-        'meta_key'    => 'thread_id',
-        'meta_value'  => $thread_id
-    ))[0];
-    $assistant_id = get_field('assistant_id', $thread_post->ID);
-
-    $message = $_POST['message'];
-
-    // Create OpenAI client
-    $client = OpenAI::client(CHATGPT_API_KEY);
-
-    // Create a message in the thread
-    $client->threads()->messages()->create($thread_id, [
-        'role' => 'user',
-        'content' => $message,
-    ]);
-
-    // Create and start a run
-    $run = $client->threads()->runs()->create($thread_id, [
-        'assistant_id' => $assistant_id,
-    ]);
-
-    // Poll for run completion and stream the results
-    while (true) {
-        $run = $client->threads()->runs()->retrieve($thread_id, $run->id);
-        mmmush_debug($run);
-        if ($run->status === 'completed') {
-            // Retrieve and send the assistant's response
-            $messages = $client->threads()->messages()->list($thread_id);
-            foreach ($messages->data as $msg) {
-                if ($msg->role === 'assistant') {
-                    $eventData = json_encode([
-                        'event' => 'message',
-                        'message' => $msg->content[0]->text->value,
-                    ]);
-                    mmmush_debug($eventData);
-                    echo "data: {$eventData}\n\n";
-                    flush();
-                    break; // Only send the latest assistant message
-                }
-            }
-            break;
-        } elseif (in_array($run->status, ['failed', 'cancelled', 'expired'])) {
-            $eventData = json_encode([
-                'event' => 'error',
-                'message' => 'Run failed: ' . $run->status,
-            ]);
-            mmmush_debug($eventData);
-            echo "data: {$eventData}\n\n";
-            flush();
-            break;
-        }
-
-        // Wait before polling again
-        sleep(1);
-    }
-
-    // End the connection when streaming is done
-    exit;
-}
-*/
-
 function mmmush_create_default_thread($assistant_id, $assistant_post) {
     $client = OpenAI::client(CHATGPT_API_KEY);
     $response = $client->threads()->create([]);
@@ -525,14 +331,6 @@ function mmmush_handle_am_event() {
         ))[0];
 
         $thread_id = get_field('thread_id', $thread_post->ID);
-
-        // find assistant post by thread id
-        $thread_post = get_posts(array(
-            'numberposts' => -1,
-            'post_type'   => 'thread',
-            'meta_key'    => 'thread_id',
-            'meta_value'  => $thread_id
-        ))[0];
         $assistant_id = get_field('assistant_id', $thread_post->ID);
     } else {
         $thread_id = $_GET['ThreadId'];
@@ -566,7 +364,7 @@ function mmmush_handle_am_event() {
             $in_progress = true;
         }
         if ($response->event === 'thread.message.delta') {
-            //mmmush_debug($response);
+            //pdebug($response);
             $delta_message = [
                 'event' => 'message',
                 'message' => $response->response->delta->content[0]->text->value,
@@ -592,19 +390,23 @@ add_action('wp_ajax_nopriv_stop_run', 'stop_run');
 function stop_run() {
     $run_id = $_POST['RunId'];
     $thread_embed_id = $_POST['ThreadEmbedId'];
+    $thread_id = mmmush_get_thread_id_from_thread_embed_id($thread_embed_id);
 
-    // find thread post by thread embed id
+    $client = OpenAI::client(CHATGPT_API_KEY);
+    $response = $client->threads()->runs()->cancel($thread_id, $run_id);
+    pdebug($response);
+    exit;
+}
+
+function mmmush_get_thread_id_from_thread_embed_id($thread_embed_id) {
     $thread_post = get_posts(array(
         'numberposts' => -1,
         'post_type'   => 'thread',
         'meta_key'    => 'thread_embed_id',
         'meta_value'  => $thread_embed_id
     ))[0];
-    
-    $thread_id = get_field('thread_id', $thread_post->ID);
-
-    $client = OpenAI::client(CHATGPT_API_KEY);
-    $response = $client->threads()->runs()->cancel($thread_id, $run_id);
-    mmmush_debug($response);
-    exit;
+    if ($thread_post) {
+        return get_field('thread_id', $thread_post->ID);
+    }
+    return null;
 }

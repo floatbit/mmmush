@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // create vector store on openai
     $assistant_id = get_field('assistant_id', $post->ID);
     $vector_stores = get_field('vector_stores', $post->ID);
-    $instructions = $description . ' Respond to queries without including any citations, references, or text inside brackets (e.g., [source]), and without indicating source numbers or references of any kind. Do not include any concluding statements, such as offering suggestions, asking for feedback, or inviting further questions.';
+    $instructions = $description . MMUSH_FIXED_INSTRUCTIONS;
     if ($vector_stores) {
         $vector_store_ids = [];
         $vector_store_ids[] = get_field('vector_store_id', $vector_stores->ID);
