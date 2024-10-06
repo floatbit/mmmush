@@ -8,7 +8,7 @@
       <li>
         <details>
           <summary>Account</summary>
-          <ul class="bg-base-100 rounded-t-none p-2 z-1">
+          <ul class="bg-base-100 rounded-t-none p-2 account-menu">
             <li><a href="/account/profile">Profile</a></li>
             <li><a href="/account/plans">Upgrade</a></li>
             <li>

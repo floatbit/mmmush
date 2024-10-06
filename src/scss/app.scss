@@ -60,4 +60,7 @@ header {
   a {
     @apply no-underline;
   }
+  .account-menu {
+    z-index: 1;
+  }
 }
