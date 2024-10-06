@@ -45,8 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $client = OpenAI::client(CHATGPT_API_KEY);
 
     $response = $client->assistants()->create([
-        'instructions' => $instructions,
         'name' => $post->post_title,
+        'instructions' => $instructions,
+        'temperature' => 0.5,
         'tools' => [
             [
                 'type' => 'file_search', 
