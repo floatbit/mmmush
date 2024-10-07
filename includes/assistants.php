@@ -54,8 +54,10 @@ function mmmush_custom_login_redirect($redirect_to, $request, $user) {
 // register redirect
 add_action('user_register', 'mmmush_custom_registration_redirect');
 function mmmush_custom_registration_redirect($user_id) {
-    wp_safe_redirect(home_url());
-    exit;
+    if (!isset($_GET['loginSocial'])) {
+        wp_safe_redirect(home_url());
+        exit;
+    }
 }
 
 // Assistant post actions for new and updated posts
