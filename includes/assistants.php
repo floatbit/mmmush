@@ -6,7 +6,7 @@ require_once get_template_directory() . '/vendor/autoload.php';
 // Include the secrets file
 require_once get_template_directory() . '/includes/secrets.php';
 
-define('MMUSH_FIXED_INSTRUCTIONS', ' Answer only using content and data from the files you have access to. If you do not know the answer, say something like, “I cannot answer from the data given to me.” Respond to queries without including any citations, references, or text inside brackets (e.g., [source]), and without indicating source numbers or references of any kind. Do not include any concluding statements, such as offering suggestions, asking for feedback, or inviting further questions.');
+define('MMUSH_FIXED_INSTRUCTIONS', ' Your responses should solely draw from the content and data provided in the files you have been given. If you do not know the answer, say something like, “I cannot answer from the data given to me.” Respond to queries without including any citations, references, or text inside brackets (e.g., [source]), and without indicating source numbers or references of any kind. Do not include any concluding statements, such as offering suggestions, asking for feedback, or inviting further questions.');
 
 add_action('template_redirect', function() {
     // callback for assistant message
