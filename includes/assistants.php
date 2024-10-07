@@ -41,7 +41,7 @@ function mmmush_query_vars( $query_vars ){
     $query_vars[] = 'am';
     $query_vars[] = 'AssistantId';
     $query_vars[] = 'AssistantEmbedId';
-    
+    $query_vars[] = 'new';
     return $query_vars;
 }
 

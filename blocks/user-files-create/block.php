@@ -25,6 +25,8 @@ if ( ! empty( $block['align'] ) ) {
     $classes .= ' align' . $block['align'];
 }
 
+$new = get_query_var('new', 0);
+
 $assistant_embed_id = get_query_var('AssistantEmbedId', '');
 
 if (empty($assistant_embed_id)) {
@@ -132,7 +134,7 @@ if ($assistant) {
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
     <div class="container">
-        <div class="grid gap-x-8 grid-cols-1">
+        <div class="grid gap-x-8 grid-cols-1 max-w-[720px]">
 
             <?php if ($upload_success) : ?>
             <p role="alert" class="alert alert-success">
@@ -151,21 +153,27 @@ if ($assistant) {
             </p>
             <?php endif;?>
 
-            <h2>Add a file to <em><?php echo $assistant->post_title; ?></em></h2>
-            <p>Your assistant will use this file to answer queries.</p>
-            <form action="<?php print get_the_permalink(); ?>?AssistantEmbedId=<?php echo $assistant_embed_id; ?>" method="POST" class="max-w-[720px]" enctype="multipart/form-data">
+            <?php if ($new == 1) : ?>
+                <h2>Hello, <em><?php echo $assistant->post_title; ?></em></h2>
+                <p>In this step, you’ll upload files that your assistant will use to provide accurate and detailed responses to user queries. These documents contain valuable information, context, and data that equip the assistant to deliver tailored insights based on the specific expertise you’ve defined.</p>
+                <p>By uploading comprehensive files, you enhance the assistant’s ability to assist users effectively. The more relevant and informative the materials, the better the assistant can draw from its knowledge base, ensuring that interactions are both insightful and engaging.</p>
+            <?php else : ?>
+                <h2>Add a file to <em><?php echo $assistant->post_title; ?></em></h2>
+                <p>Your assistant will use this file to answer queries.</p>
+            <?php endif; ?>
+            <form action="<?php print get_the_permalink(); ?>?AssistantEmbedId=<?php echo $assistant_embed_id; ?>&new=<?php echo $new; ?>" method="POST" enctype="multipart/form-data">
                 <label class="form-control w-full mt-5 mb-10">
                     <div class="label">
-                        <span class="label-text"><strong>Title</strong></span>
+                        <span class="label-text"><strong>Title of the file</strong></span>
                     </div>
                     <div class="indicator w-full">
-                        <input type="text" name="title" placeholder="e.g. 2024 Q1 Sales Report" class="input input-bordered w-full text-sm" />
+                        <input type="text" name="title" placeholder="For example: 2023-2024 Mid-Century Collections" class="input input-bordered w-full text-sm" />
                         <span class="indicator-item badge">Required</span>
                     </div>
                 </label>
                 <label class="form-control w-full mb-10">
                     <div class="label">
-                        <span class="label-text"><strong>File</strong></span>
+                        <span class="label-text"><strong>Select File</strong></span>
                     </div>
                     <div class="indicator w-full">
                         <input type="file" name="file" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.json" /> 

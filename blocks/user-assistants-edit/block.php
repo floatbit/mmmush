@@ -49,22 +49,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = sanitize_text_field(strip_tags($_POST['title']));
     $description = sanitize_textarea_field(strip_tags($_POST['description']));
 
-    // update assistant in wp
-    wp_update_post([
-        'ID'           => $assistant->ID,
-        'post_title'   => $title,
-        'post_content' => $description,
-    ]);
+    if ($title && $description) {
+        // update assistant in wp
+        wp_update_post([
+            'ID'           => $assistant->ID,
+            'post_title'   => $title,
+            'post_content' => $description,
+        ]);
 
-    // update assistant in openai
-    $client = OpenAI::client(CHATGPT_API_KEY);
-    $response = $client->assistants()->modify($assistant_id, [
-        'name' => $title,
-        'instructions' => $description . MMUSH_FIXED_INSTRUCTIONS,
-        'temperature' => 0.5,
-    ]);
+        // update assistant in openai
+        $client = OpenAI::client(CHATGPT_API_KEY);
+        $response = $client->assistants()->modify($assistant_id, [
+            'name' => $title,
+            'instructions' => $description . MMUSH_FIXED_INSTRUCTIONS,
+            'temperature' => 0.5,
+        ]);
 
-    print '<script>window.location.href = "/user/assistants/edit/?AssistantEmbedId=' . $assistant_embed_id . '&updated=1";</script>';
+        print '<script>window.location.href = "/user/assistants/edit/?AssistantEmbedId=' . $assistant_embed_id . '&updated=1";</script>';
+    }
 }
 ?>
 

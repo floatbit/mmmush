@@ -54,7 +54,7 @@
                 $files = get_field('files', $vector_store->ID);
             ?>
 
-            <h3>Files <a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-xs">Add File</a></h3>
+            <h3>Files <a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-xs">Add file</a></h3>
             <p>Your assistant will use these files to answer queries.</p>
             <?php if ($files) : ?>
             <p>
