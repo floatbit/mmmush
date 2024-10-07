@@ -44,6 +44,9 @@
     margin-top: 0;
     font-size: 18px;
 }
+#allybox-embed img {
+    max-width: 100%;
+}
 #allybox-chat-container {
     display: flex;
     flex-direction: column;
