@@ -1,4 +1,7 @@
 .block-user-assistants {
+    .card-top {
+        flex-grow: 1;
+    }
     .description {
         display: -webkit-box;
         -webkit-line-clamp: 8;

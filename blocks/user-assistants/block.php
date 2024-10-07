@@ -44,17 +44,19 @@ $assistants = get_posts([
             ?>
             <div class="card bg-base-100 shadow-lg">
                 <div class="card-body min-h-[360px]">
-                    <h2 class="card-title mt-0"><?php echo $assistant->post_title; ?></h2>
-                    <div class="description mb-10">
-                        <p class="font-normal text-gray-500"><?php echo $assistant->post_content; ?></p>
-                    </div>
-                    <div>
-                        <p class="hidden"><span class="font-bold">Binder</span><br> <?php echo $vector_store->post_title; ?></p>
-                        <?php if (is_array($files) && count($files) > 0) {
-                                $file_text = count($files) . ' ' . (count($files) == 1 ? 'File' : 'Files');
-                        } else {
-                            $file_text = 'No files';
-                        }?>
+                    <div class="card-top">
+                        <h2 class="card-title mt-0"><?php echo $assistant->post_title; ?></h2>
+                        <div class="description mb-10">
+                            <p class="font-normal text-gray-500"><?php echo $assistant->post_content; ?></p>
+                        </div>
+                        <div>
+                            <p class="hidden"><span class="font-bold">Binder</span><br> <?php echo $vector_store->post_title; ?></p>
+                            <?php if (is_array($files) && count($files) > 0) {
+                                    $file_text = count($files) . ' ' . (count($files) == 1 ? 'File' : 'Files');
+                            } else {
+                                $file_text = 'No files';
+                            }?>
+                        </div>
                     </div>
                     <div class="card-actions justify-between items-end">
                         <div class="text-sm lowercase"><?php echo $file_text; ?></div>
