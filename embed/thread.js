@@ -284,7 +284,7 @@ async function allybox(config) {
     document.addEventListener('DOMContentLoaded', () => {
         document.body.addEventListener('click', (event) => {
             const link = event.target.closest('a');
-            if (link) {
+            if (link && !link.target) { // Check if the link does not already have a target
                 event.preventDefault(); // Prevent the default action
                 window.open(link.href, '_blank'); // Open the link in a new window
             }
