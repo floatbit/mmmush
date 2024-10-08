@@ -50,7 +50,7 @@ async function allybox(config) {
         
         try {
             const threadEmbedId = await checkAndCreateThread(assistantEmbedId);
-            //console.log('Thread Embed ID:', threadEmbedId);
+            console.log('Thread Embed ID:', threadEmbedId);
 
             // Show the embed
             embedDiv.style.display = 'flex';
@@ -206,6 +206,7 @@ async function allybox(config) {
 
             if (threadEmbedId) {
                 resolve(threadEmbedId);
+                getPreviousMessages(threadEmbedId, assistantEmbedId); // Call to get previous messages
             } else {
                 fetch(`${BASE_URL}/wp-admin/admin-ajax.php`, {
                     method: 'POST',
@@ -222,6 +223,7 @@ async function allybox(config) {
                     if (data.success && data.data.thread_embed_id) {
                         setCookie(cookieName, data.data.thread_embed_id, 7); // Cookie expires in 7 days
                         resolve(data.data.thread_embed_id);
+                        getPreviousMessages(data.data.thread_embed_id, assistantEmbedId); // Call to get previous messages
                     } else {
                         reject(new Error('Failed to create a new thread: ' + data.message));
                     }
@@ -230,6 +232,39 @@ async function allybox(config) {
                     reject(error);
                 });
             }
+        });
+    }
+
+    function getPreviousMessages(threadEmbedId, assistantEmbedId) {
+        fetch(`${BASE_URL}/wp-admin/admin-ajax.php`, {
+            method: 'POST',
+            body: new URLSearchParams({
+                action: 'get_previous_messages',
+                ThreadEmbedId: threadEmbedId,
+                AssistantEmbedId: assistantEmbedId
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.data.messages) {
+                    for (const message of data.data.messages) {
+                        const element = addMessage(message.role, '');
+                        let messageText = message.content;
+                        if (message.role === 'assistant') {
+                            element.innerHTML = marked.parse(messageText);
+                        } else {
+                            element.textContent = messageText;
+                        }
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching previous messages:', error);
         });
     }
 

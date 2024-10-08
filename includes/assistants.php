@@ -413,3 +413,38 @@ function mmmush_get_thread_id_from_thread_embed_id($thread_embed_id) {
     }
     return null;
 }
+
+add_action('wp_ajax_get_previous_messages', 'get_previous_messages');
+add_action('wp_ajax_nopriv_get_previous_messages', 'get_previous_messages');
+
+function get_previous_messages() {
+    // Check if the required parameters are set
+    if (!isset($_POST['ThreadEmbedId']) || !isset($_POST['AssistantEmbedId'])) {
+        wp_send_json_error('Missing parameters');
+        wp_die();
+    }
+
+    $thread_embed_id = sanitize_text_field($_POST['ThreadEmbedId']);
+    $assistant_embed_id = sanitize_text_field($_POST['AssistantEmbedId']);
+
+    $thread_id = mmmush_get_thread_id_from_thread_embed_id($thread_embed_id);
+
+    $client = OpenAI::client(CHATGPT_API_KEY);
+    $response = $client->threads()->messages()->list($thread_id, ['limit' => 10]);
+
+    $previous_messages = [];
+    foreach ($response->data as $message) {
+        $previous_messages[] = [
+            'role' => $message->role,
+            'content' => $message->content[0]->text->value,
+        ];
+    }
+    $previous_messages = array_reverse($previous_messages);
+    if ($previous_messages) {
+        wp_send_json_success(['messages' => $previous_messages]);
+    } else {
+        wp_send_json_error('No previous messages found');
+    }
+
+    wp_die(); // This is required to terminate immediately and return a proper response
+}
