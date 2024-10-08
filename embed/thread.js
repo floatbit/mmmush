@@ -107,6 +107,7 @@ async function allybox(config) {
                         fullMessage += eventData.message;
                         const cleanedMessage = removeSourceTags(fullMessage);
                         element.innerHTML = marked.parse(cleanedMessage);
+                        linksNewWindow(element);
                         stopMessage.classList.remove('hidden');
                         if (eventData.run_id) {
                             runId = eventData.run_id;
@@ -174,6 +175,14 @@ async function allybox(config) {
                         console.error('Error stopping run:', error);
                     });
                 }
+            }
+            
+            function linksNewWindow(element) {
+                // Ensure all <a> tags open in a new window
+                const links = element.querySelectorAll('a');
+                links.forEach(link => {
+                    link.setAttribute('target', '_blank');
+                });
             }
 
 
@@ -259,6 +268,7 @@ async function allybox(config) {
                         } else {
                             element.textContent = messageText;
                         }
+                        linksNewWindow(element);
                     }
                     setTimeout(scrollToBottom, 1000);
                 }
@@ -280,14 +290,4 @@ async function allybox(config) {
         // Replace the matched pattern with an empty string
         return input.replace(regex, '');
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.addEventListener('click', (event) => {
-            const link = event.target.closest('a');
-            if (link && !link.target) { // Check if the link does not already have a target
-                event.preventDefault(); // Prevent the default action
-                window.open(link.href, '_blank'); // Open the link in a new window
-            }
-        });
-    });
 }
