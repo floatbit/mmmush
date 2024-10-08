@@ -60,6 +60,7 @@ function mmmush_custom_registration_redirect($user_id) {
     }
 }
 
+/*
 // Assistant post actions for new and updated posts
 function mmmush_handle_wp_insert_post($post_id, $post, $update) {
     if ($post->post_status === 'publish') {
@@ -196,8 +197,8 @@ function mmmush_handle_wp_insert_post($post_id, $post, $update) {
             update_field('field_66f5c2e748393', $response->id, $post->ID);
         }
     }
-
 }
+*/
 //add_action('wp_insert_post', 'mmmush_handle_wp_insert_post', 10, 3);
 
 // Delete assistant when post is trashed

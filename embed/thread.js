@@ -22,7 +22,7 @@ async function allybox(config) {
         <div>
             <form id="allybox-chat-form" action="">
                 <div class="textarea-container">
-                    <textarea id="allybox-message-input" name="message" placeholder="Ask me about"></textarea>
+                    <textarea id="allybox-message-input" name="message" placeholder="${config.placeholderText || 'Ask me a question'}"></textarea>
                 </div>
                 <div class="text-right">
                     <button type="submit">Send</button>
