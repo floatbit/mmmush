@@ -282,12 +282,12 @@ async function allybox(config) {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const links = document.querySelectorAll('a');
-        links.forEach(link => {
-            link.addEventListener('click', (event) => {
+        document.body.addEventListener('click', (event) => {
+            const link = event.target.closest('a');
+            if (link) {
                 event.preventDefault(); // Prevent the default action
                 window.open(link.href, '_blank'); // Open the link in a new window
-            });
+            }
         });
     });
 }
