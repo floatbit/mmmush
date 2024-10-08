@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // create vector store on openai
         $assistant_id = get_field('assistant_id', $post->ID);
         $vector_stores = get_field('vector_stores', $post->ID);
-        $instructions = $description . MMUSH_FIXED_INSTRUCTIONS;
+        $instructions = $description . PHP_EOL . PHP_EOL . MMUSH_FIXED_INSTRUCTIONS;
         if ($vector_stores) {
             $vector_store_ids = [];
             $vector_store_ids[] = get_field('vector_store_id', $vector_stores->ID);

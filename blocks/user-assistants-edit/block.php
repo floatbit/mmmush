@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $client = OpenAI::client(CHATGPT_API_KEY);
         $response = $client->assistants()->modify($assistant_id, [
             'name' => $title,
-            'instructions' => $description . MMUSH_FIXED_INSTRUCTIONS,
+            'instructions' => $description . PHP_EOL . PHP_EOL . MMUSH_FIXED_INSTRUCTIONS,
             'temperature' => 0.5,
         ]);
 
