@@ -260,7 +260,7 @@ async function allybox(config) {
                             element.textContent = messageText;
                         }
                     }
-                    scrollToBottom();
+                    setTimeout(scrollToBottom, 1000);
                 }
             }
         })
