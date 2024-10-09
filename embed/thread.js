@@ -286,7 +286,7 @@ async function allybox(config) {
                 if (data.data.messages) {
                     for (const message of data.data.messages) {
                         const element = addMessage(message.role, '');
-                        let messageText = message.content;
+                        let messageText = removeSourceTags(message.content);
                         if (message.role === 'assistant') {
                             element.innerHTML = marked.parse(messageText);
                         } else {
