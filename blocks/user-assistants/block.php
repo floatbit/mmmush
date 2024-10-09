@@ -30,6 +30,8 @@ $assistants = get_posts([
     'post_type' => 'assistant',
     'numberposts' => -1,
     'author' => get_current_user_id(),
+    'orderby' => 'modified',
+    'order' => 'DESC',
 ]);
 
 ?>
