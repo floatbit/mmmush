@@ -27,5 +27,9 @@ if ( ! empty( $block['align'] ) ) {
 ?>
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
-    
+    <div class="container">
+        <div class="grid gap-x-8 grid-cols-1 max-w-[720px]">
+            <?php the_field('text'); ?>
+        </div>
+    </div>
 </div>
