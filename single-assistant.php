@@ -67,7 +67,7 @@
                             $file_subtype = pathinfo($file_url, PATHINFO_EXTENSION);
                         ?>  
                         <li class="file">
-                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>)
+                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo strtoupper($file_subtype); ?> / <?php print mmmush_time_ago($file->post_date);?>)
                             <form action="<?php print get_the_permalink(); ?>" method="post" class="inline">
                                 <button class="btn btn-xs btn-warning hidden delete-file">Delete</button>
                                 <input type="submit" value="Confirm deletetion" class="btn btn-xs btn-error hidden confirm-delete-file">
