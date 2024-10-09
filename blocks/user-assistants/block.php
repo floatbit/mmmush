@@ -44,7 +44,7 @@ $assistants = get_posts([
                 $vector_store = get_field('vector_stores', $assistant->ID);
                 $files = get_field('files', $vector_store->ID);
             ?>
-            <div class="card bg-base-100 shadow-lg">
+            <a href="<?php echo get_the_permalink($assistant->ID); ?>" class="card bg-base-100 shadow-lg no-underline">
                 <div class="card-body min-h-[360px]">
                     <div class="card-top">
                         <h2 class="card-title mt-0"><?php echo $assistant->post_title; ?></h2>
@@ -62,15 +62,15 @@ $assistants = get_posts([
                     </div>
                     <div class="card-actions justify-between items-end">
                         <div class="text-sm lowercase"><?php echo $file_text; ?></div>
-                        <a class="btn btn-xs btn-outline" href="<?php echo get_the_permalink($assistant->ID); ?>">VIEW</a>
+                        <span class="text-xs">changed <?php print mmmush_time_ago($assistant->post_modified); ?></span>
                     </div>
                 </div>
-            </div>
+            </a>
             <?php endforeach; ?>
-            <a class="card bg-base-100 shadow-lg bg-gray-100 no-underline create-new" href="/user/assistants/create">
-                <div class="card-body items-center justify-center">
-                    <p class="text-2xl card-title m-0">
-                        Create New Assistant
+            <a class="card bg-base-100 shadow-lg no-underline create-new" href="/user/assistants/create">
+                <div class="card-body items-center justify-center min-h-[360px]">
+                    <p class="text-2xl card-title m-0 text-center">
+                        Add new assistant
                     </p>                    
                 </div>
             </a>

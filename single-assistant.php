@@ -67,7 +67,7 @@
                             $file_subtype = pathinfo($file_url, PATHINFO_EXTENSION);
                         ?>  
                         <li class="file">
-                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo strtoupper($file_subtype); ?> / <?php print mmmush_time_ago($file->post_date);?>)
+                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>) <?php print mmmush_time_ago($file->post_date);?>
                             <form action="<?php print get_the_permalink(); ?>" method="post" class="inline">
                                 <button class="btn btn-xs btn-warning hidden delete-file">Delete</button>
                                 <input type="submit" value="Confirm deletetion" class="btn btn-xs btn-error hidden confirm-delete-file">
@@ -89,7 +89,7 @@
         <div>   
             <h3>Embed Code</h3>
             <?php if ($files) : ?>
-            <p>You can use this assistant in your website by copying and pasting the following code.</p>
+            <p>You can add this assistant to your website by copying and pasting the following code.</p>
             <textarea readonly class="textarea textarea-bordered text-sm h-[280px] w-full overflow-hidden">
 &lt;div id=&quot;allybox-embed&quot;&gt;
     &lt;h3&gt;<?php the_title(); ?>&lt;/h3&gt;
