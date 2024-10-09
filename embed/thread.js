@@ -3,7 +3,7 @@ const scriptSrc = scriptElement.src;
 const BASE_URL = new URL(scriptSrc).origin;
 
 const markedScript = document.createElement('script');
-markedScript.src = `${BASE_URL}/embed//marked.min.js`;
+markedScript.src = `${BASE_URL}/embed/marked.min.js`;
 document.head.appendChild(markedScript);
 
 const styleSheet = document.createElement('link');
@@ -14,11 +14,10 @@ document.head.appendChild(styleSheet);
 async function allybox(config) {
     const embedDiv = document.getElementById('allybox-embed');
     const chatContainer = document.getElementById('allybox-chat-container');
+
     if (chatContainer) {
         chatContainer.innerHTML = `
-        <div id="allybox-chat-messages">
-            <!-- Messages will be added here -->
-        </div>
+        <div id="allybox-chat-messages"></div>
         <div>
             <form id="allybox-chat-form" action="">
                 <div class="textarea-container">
@@ -47,57 +46,47 @@ async function allybox(config) {
         const assistantEmbedId = document.querySelector('input[name="assistantEmbedId"]').value;
         let eventSource = null;
         let runId = null;
-        
+
         try {
             const threadEmbedId = await checkAndCreateThread(assistantEmbedId);
             console.log('Thread Embed ID:', threadEmbedId);
-
-            // Show the embed
             embedDiv.style.display = 'flex';
 
             form.addEventListener('submit', (event) => {
                 event.preventDefault();
-                if (messageInput.value.trim() === '') {
-                    messageInput.focus();
-                } else {
+                if (messageInput.value.trim()) {
                     sendMessage();
+                } else {
+                    messageInput.focus();
                 }
             });
 
             messageInput.addEventListener('keydown', (event) => {
                 if ((event.shiftKey || event.metaKey) && event.key === 'Enter') {
                     event.preventDefault();
-                    if (messageInput.value.trim() !== '') {
+                    if (messageInput.value.trim()) {
                         sendMessage();
                     }
                 }
             });
 
-            stopMessage.addEventListener('click', () => {
-                //console.log('Stop message clicked');
-                stopRun();
-            });
-            
-            function sendMessage() {
-                if (!loadingMessage.classList.contains('hidden')) {
-                    return; // Check if loading is active
-                }
+            stopMessage.addEventListener('click', stopRun);
+
+            async function sendMessage() {
+                if (!loadingMessage.classList.contains('hidden')) return;
 
                 const formData = new FormData(form);
-                const assistantEmbedId = formData.get('assistantEmbedId');
                 const message = formData.get('message').trim();
 
                 if (!message) return;
 
                 messageInput.value = '';
                 toggleLoading(true);
-
                 addMessage('user', message);
 
                 const element = addMessage('assistant', '');
                 const url = `${endpoint}?ThreadEmbedId=${threadEmbedId}&AssistantEmbedId=${assistantEmbedId}&message=${encodeURIComponent(message)}`;
                 eventSource = new EventSource(url);
-
                 scrollToBottom();
 
                 let fullMessage = '';
@@ -109,9 +98,7 @@ async function allybox(config) {
                         element.innerHTML = marked.parse(cleanedMessage);
                         linksNewWindow(element);
                         stopMessage.classList.remove('hidden');
-                        if (eventData.run_id) {
-                            runId = eventData.run_id;
-                        }
+                        if (eventData.run_id) runId = eventData.run_id;
                     } else if (eventData.event === 'complete') {
                         handleComplete(eventSource);
                     }
@@ -131,20 +118,16 @@ async function allybox(config) {
             function toggleLoading(isLoading) {
                 loadingMessage.classList.toggle('hidden', !isLoading);
                 submitButton.classList.toggle('hidden', isLoading);
-                if (isLoading === false) {
-                    stopMessage.classList.add('hidden');
-                }
+                if (!isLoading) stopMessage.classList.add('hidden');
             }
 
             function handleComplete(eventSource) {
-                //console.log('Stream completed');
                 eventSource.close();
                 runId = null;
                 toggleLoading(false);
             }
 
             function handleError(eventSource) {
-                //console.error('EventSource failed');
                 eventSource.close();
                 runId = null;
                 toggleLoading(false);
@@ -164,29 +147,49 @@ async function allybox(config) {
                         }
                     })
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
+                        if (!response.ok) throw new Error('Network response was not ok');
                         eventSource.close();
                         runId = null;
                         toggleLoading(false);
                     })
-                    .catch(error => {
-                        console.error('Error stopping run:', error);
-                    });
+                    .catch(error => console.error('Error stopping run:', error));
                 }
             }
-            
+
             function linksNewWindow(element) {
-                // Ensure all <a> tags open in a new window
                 const links = element.querySelectorAll('a');
-                links.forEach(link => {
-                    link.setAttribute('target', '_blank');
-                });
+                links.forEach(link => link.setAttribute('target', '_blank'));
             }
 
+            function scrollToBottom() {
+                const messagesContainer = document.getElementById('allybox-chat-messages');
+                const targetScrollTop = messagesContainer.scrollHeight;
+                const startScrollTop = messagesContainer.scrollTop;
+                const distance = targetScrollTop - startScrollTop;
+                const duration = 500; // duration in milliseconds
+                let startTime = null;
 
-            
+                function animation(currentTime) {
+                    if (!startTime) startTime = currentTime;
+                    const timeElapsed = currentTime - startTime;
+                    const progress = Math.min(timeElapsed / duration, 1); // Ensure progress does not exceed 1
+                    const easeInOutQuad = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; // Easing function
+
+                    messagesContainer.scrollTop = startScrollTop + distance * easeInOutQuad;
+
+                    if (timeElapsed < duration) {
+                        requestAnimationFrame(animation);
+                    }
+                }
+
+                requestAnimationFrame(animation);
+            }
+
+            function removeSourceTags(input) {
+                const regex = /【\d+:\d+†source】/g;
+                return input.replace(regex, '');
+            }
+
         } catch (error) {
             console.error('Error:', error);
         }
@@ -277,17 +280,5 @@ async function allybox(config) {
         .catch(error => {
             console.error('Error fetching previous messages:', error);
         });
-    }
-
-    function scrollToBottom() {
-        const messagesContainer = document.getElementById('allybox-chat-messages');
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function removeSourceTags(input) {
-        // Regular expression to match the pattern 【number:number†source】
-        const regex = /【\d+:\d+†source】/g;
-        // Replace the matched pattern with an empty string
-        return input.replace(regex, '');
     }
 }
