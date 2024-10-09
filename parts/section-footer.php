@@ -5,7 +5,7 @@
     </aside>
     <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
       <a href="/about">About</a>
-      <a href="/terms-conditions">Terms</a>
+      <a href="/terms-conditions">Terms & Conditions</a>
       </a>
     </nav>
   </div>
