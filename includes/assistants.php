@@ -466,7 +466,7 @@ function mmmush_time_ago($date) {
     $years = round($seconds / 31553280);
 
     if ($seconds <= 60) {
-        return "Just Now";
+        return "just now";
     } elseif ($minutes <= 60) {
         return ($minutes == 1) ? "one minute ago" : "$minutes minutes ago";
     } elseif ($hours <= 24) {
