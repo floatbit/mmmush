@@ -75,6 +75,7 @@
     border-radius: 10px;
     position: relative;
     top: 4px;
+    resize: none;
 }
 #allybox-embed button {
     background-color: #000;
