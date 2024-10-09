@@ -103,6 +103,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
     <div class="container">
+
+        <ul class="steps w-full mb-10">
+            <li class="step step-primary">Define Assistant</li>
+            <li class="step">Add Files</li>
+            <li class="step">Chat with Assistant</li>
+        </ul>
+
         <div class="grid gap-x-8 grid-cols-1 max-w-[720px]">
             <?php if ($new == 1) : ?>
                 <h2>Welcome! Let's create your first assistant.</h2>

@@ -11,6 +11,10 @@ define('MMUSH_FIXED_INSTRUCTIONS', ' Your responses should solely draw from the 
 add_action('template_redirect', function() {
     // callback for assistant message
     if (get_query_var('am') == 1) {
+        if (empty($_SERVER['HTTP_REFERER'])) {
+            wp_redirect(home_url());
+            exit;
+        }
         mmmush_handle_am_event();
         exit;
     }

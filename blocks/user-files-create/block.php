@@ -134,6 +134,13 @@ if ($assistant) {
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
     <div class="container">
+
+        <ul class="steps w-full mb-10">
+            <li data-content="✓" class="step step-primary">Define Assistant</li>
+            <li class="step step-primary">Add Files</li>
+            <li class="step">Chat with Assistant</li>
+        </ul>
+
         <div class="grid gap-x-8 grid-cols-1 max-w-[720px]">
 
             <?php if ($upload_success) : ?>

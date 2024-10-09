@@ -62,18 +62,18 @@ $assistants = get_posts([
                     </div>
                     <div class="card-actions justify-between items-end">
                         <div class="text-sm lowercase"><?php echo $file_text; ?></div>
-                        <a class="btn btn-sm" href="<?php echo get_the_permalink($assistant->ID); ?>">CHAT</a>
+                        <a class="btn btn-xs btn-outline" href="<?php echo get_the_permalink($assistant->ID); ?>">VIEW</a>
                     </div>
                 </div>
             </div>
             <?php endforeach; ?>
-            <div class="card bg-base-100 shadow-lg bg-gray-200">
+            <a class="card bg-base-100 shadow-lg bg-gray-100 no-underline create-new" href="/user/assistants/create">
                 <div class="card-body items-center justify-center">
-                    <p class="text-3xl card-title">
-                        <a class="btn btn-lg btn-ghost " href="/user/assistants/create">Create New Assistant</a>
+                    <p class="text-2xl card-title m-0">
+                        Create New Assistant
                     </p>                    
                 </div>
-            </div>
+            </a>
         </div>
 
     </div>

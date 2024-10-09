@@ -9,4 +9,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+    .create-new:hover {
+        @apply bg-gray-200;
+    }
 }
