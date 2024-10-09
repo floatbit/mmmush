@@ -45,7 +45,7 @@
         <?php endif; ?>
             
         <div>
-            <h2><?php the_title(); ?> <a class="btn btn-xs" href="/user/assistants/edit?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>">Edit</a></h2>
+            <h2><?php the_title(); ?> <a class="btn btn-xs btn-outline" href="/user/assistants/edit?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>">Edit</a></h2>
             <?php the_content(); ?>
         </div>
         <div>
@@ -54,7 +54,7 @@
                 $files = get_field('files', $vector_store->ID);
             ?>
 
-            <h3>Files <a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-xs">Add file</a></h3>
+            <h3>Files <a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-xs btn-outline">Add file</a></h3>
             <p>Your assistant will use these files to answer queries.</p>
             <?php if ($files) : ?>
             <p>
