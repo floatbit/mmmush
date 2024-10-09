@@ -66,6 +66,7 @@
     width: 100%;
 }
 #allybox-embed textarea {
+    box-sizing: border-box;
     font-size: 14px;
     width: calc(100% - 10px);
     height: 100%;
