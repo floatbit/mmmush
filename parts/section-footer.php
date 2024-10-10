@@ -5,8 +5,8 @@
     </aside>
     <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
       <a href="/about">About</a>
+      <a href="/privacy-policy">Privacy Policy</a>
       <a href="/terms-conditions">Terms & Conditions</a>
-      </a>
     </nav>
   </div>
 </footer>
