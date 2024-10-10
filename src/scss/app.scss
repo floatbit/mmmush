@@ -57,16 +57,19 @@ main {
 }
 
 header {
-  @apply py-0;
   @apply relative;
   z-index: 2000;
-  min-height: 0;
 a {
     @apply no-underline;
   }
   .account-menu {
     z-index: 1;
   }
+}
+
+header.navbar {
+  @apply py-0;
+  min-height: 0;
 }
 
 .steps {
