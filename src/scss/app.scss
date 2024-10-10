@@ -65,6 +65,10 @@ header {
   .account-menu {
     z-index: 1;
   }
+  .navbar {
+    @apply py-0;
+    min-height: 0;
+  }
 }
 
 .steps {
