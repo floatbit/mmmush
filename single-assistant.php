@@ -45,7 +45,7 @@
         <?php endif; ?>
             
         <div>
-            <h2><?php the_title(); ?> <a class="btn btn-xs btn-outline" href="/user/assistants/edit?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>">Edit</a></h2>
+            <h2><?php the_title(); ?> <a class="btn btn-xs btn-outline ml-2" href="/user/assistants/edit?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>">Edit</a></h2>
             <?php the_content(); ?>
         </div>
         <div>
@@ -54,7 +54,7 @@
                 $files = get_field('files', $vector_store->ID);
             ?>
 
-            <h3>Files <a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-xs btn-outline">Add file</a></h3>
+            <h3>Files <a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-xs btn-outline ml-2">Add file</a></h3>
             <p>Your assistant will use these files to answer queries.</p>
             <?php if ($files) : ?>
             <p>
@@ -69,8 +69,8 @@
                         <li class="file">
                             <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>) <?php print mmmush_time_ago($file->post_date);?>
                             <form action="<?php print get_the_permalink(); ?>" method="post" class="inline">
-                                <button class="btn btn-xs btn-warning hidden delete-file">Delete</button>
-                                <input type="submit" value="Confirm deletetion" class="btn btn-xs btn-error hidden confirm-delete-file">
+                                <button class="btn btn-xs btn-warning hidden delete-file ml-2">Delete</button>
+                                <input type="submit" value="Confirm deletetion" class="btn btn-xs btn-error hidden confirm-delete-file ml-2">
                                 <input type="hidden" name="file_id" value="<?php echo $file->ID; ?>">
                             </form>
                         </li>
