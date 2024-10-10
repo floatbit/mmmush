@@ -63,6 +63,7 @@
     align-items: flex-end;
 }
 #allybox-embed .textarea-container {
+    position: relative;
     width: 100%;
 }
 #allybox-embed textarea {
@@ -72,7 +73,7 @@
     height: 100%;
     border: 1px solid #e0e0e0;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
     position: relative;
     top: 4px;
     resize: none;
@@ -158,4 +159,19 @@
 }
 #allybox-embed .stop-message:hover:after {
     background-color: #000;
+}
+#allybox-embed .allybox-input-length {
+    position: absolute;
+    height: 4px;
+    border-radius: 10px;
+    width: 100%;
+    left: 0;
+    bottom: -1px;
+    max-width: calc(100% - 10px);
+}
+#allybox-embed .allybox-input-length-current {
+    display: block;
+    height: 100%;
+    width: 0;
+    background-color: #e0e0e0;
 }

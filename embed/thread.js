@@ -24,7 +24,10 @@ async function allybox(config) {
         <div>
             <form id="allybox-chat-form" action="">
                 <div class="textarea-container">
-                    <textarea id="allybox-message-input" name="message" placeholder="${config.placeholderText || 'Ask me a question'}"></textarea>
+                    <textarea id="allybox-message-input" name="message" placeholder="${config.placeholderText || 'Ask me a question'}" maxlength="200"></textarea>
+                    <span class="allybox-input-length">
+                        <span class="allybox-input-length-current"></span>
+                    </span>
                 </div>
                 <div class="text-right">
                     <button type="submit">Send</button>
@@ -80,6 +83,8 @@ async function allybox(config) {
                 }
             });
 
+            // Add event listener to the message input
+            messageInput.addEventListener('input', updateInputLength);
 
             stopMessage.addEventListener('click', stopRun);
 
@@ -93,6 +98,7 @@ async function allybox(config) {
                 if (!message) return;
 
                 messageInput.value = '';
+                updateInputLength();
                 toggleLoading(true);
                 addMessage('user', message);
 
@@ -209,6 +215,18 @@ async function allybox(config) {
                 const regex = /【\d+:\d+†source】/g;
                 return input.replace(regex, '');
             }
+
+            // Function to update the input length percentage
+            function updateInputLength() {
+                const maxLength = 200; // Maximum length of the input
+                const currentLength = messageInput.value.length; // Current length of the input
+                const percentage = (currentLength / maxLength) * 100; // Calculate percentage
+
+                // Update the width of the .allybox-input-length-current element
+                const inputLengthCurrent = document.querySelector('.allybox-input-length-current');
+                inputLengthCurrent.style.width = `${percentage}%`;
+            }
+
 
         } catch (error) {
             console.error('Error:', error);
