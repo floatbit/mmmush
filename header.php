@@ -10,7 +10,9 @@
 
 <body <?php body_class('antialiased'); ?>>
 
-    <?php get_template_part('parts/section-header'); ?>
-    <?php get_template_part('parts/breadcrumbs'); ?>
+    <div class="top sticky top-0 z-[1000] shadow-lg bg-base-200">
+        <?php get_template_part('parts/section-header'); ?>
+        <?php get_template_part('parts/breadcrumbs'); ?>
+    </div>
 
     <main class="prose-sm max-w-none pt-10 pb-20">

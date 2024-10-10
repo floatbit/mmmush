@@ -1,4 +1,4 @@
-<header class="navbar bg-base-200 border-b border-gray-200">
+<header class="navbar border-b border-gray-200">
   <div class="flex-1">
     <a href="/" class="btn btn-ghost text-lg">ally<span class="border border-gray-300 inline-block text-sm px-1.5 py-0.5 relative left-[-2px] top-[1px]">BOX</span></a>
   </div>
