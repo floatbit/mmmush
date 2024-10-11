@@ -20,6 +20,7 @@
 #allybox-embed ol, 
 #allybox-embed ul {
     font-size: 14px;
+    margin-top: 16px;
     margin-bottom: 20px;
 }
 #allybox-embed ol {
