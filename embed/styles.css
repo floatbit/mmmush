@@ -31,7 +31,11 @@
 #allybox-embed ul ul,
 #allybox-embed ol ol,
 #allybox-embed ol ul,
-#allybox-embed ul ol {
+#allybox-embed ul ol,
+#allybox-embed ul ul li,
+#allybox-embed ol ol li,
+#allybox-embed ol ul li,
+#allybox-embed ul ol li {
     padding-left: 0;
 }
 #allybox-embed ul ul li::marker,
