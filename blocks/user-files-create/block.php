@@ -40,6 +40,8 @@ $assistant = get_posts([
     'meta_value'  => $assistant_embed_id
 ])[0];
 
+$upload_success = FALSE;
+
 if ($assistant) {
     $vector_store = get_field('vector_stores', $assistant->ID);
     $vector_store_id = get_field('vector_store_id', $vector_store->ID);

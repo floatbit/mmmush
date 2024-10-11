@@ -1,5 +1,8 @@
 <?php get_header(); ?>
 
+<?php 
+    $file_deleted = FALSE;
+?>
 <?php if (isset($_POST['file_id'])) : ?>
     <?php 
         $file_id = $_POST['file_id'];
