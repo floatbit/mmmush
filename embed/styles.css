@@ -87,15 +87,9 @@
     cursor: pointer;
 }
 #allybox-embed .message {
-    all: unset;
-    box-sizing: border-box;
     margin: 0 0 15px 0;
     padding: 10px 20px;
     border-radius: 10px;
-}
-#allybox-embed .message * {
-    all: unset;
-    box-sizing: border-box;
 }
 #allybox-embed .message.user {
     background-color: #0693e3;
