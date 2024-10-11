@@ -64,6 +64,13 @@ function mmmush_custom_registration_redirect($user_id) {
     }
 }
 
+// Add JSON support
+function mmmush_custom_mime_types($mime_types) {
+    $mime_types['json'] = 'application/json';
+    return $mime_types;
+}
+add_filter('upload_mimes', 'mmmush_custom_mime_types');
+
 /*
 // Assistant post actions for new and updated posts
 function mmmush_handle_wp_insert_post($post_id, $post, $update) {
