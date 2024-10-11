@@ -28,10 +28,15 @@
 #allybox-embed ul {
     list-style-type: disc;
 }
+#allybox-embed ol,
+#allybox-embed ul {
+    padding-left: 20px;
+}
 #allybox-embed ol li,
 #allybox-embed ul li {
     margin-top: 8px;
     margin-bottom: 8px;
+    padding-left: 10px;
 }
 
 #allybox-embed ul ul,
@@ -42,7 +47,7 @@
 #allybox-embed ol ol li,
 #allybox-embed ol ul li,
 #allybox-embed ul ol li {
-    padding-left: 0;
+    padding: 0;
 }
 #allybox-embed ul ul li::marker,
 #allybox-embed ol ol li::marker,
