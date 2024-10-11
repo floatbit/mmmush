@@ -28,6 +28,12 @@
 #allybox-embed ul {
     list-style-type: disc;
 }
+#allybox-embed ol li,
+#allybox-embed ul li {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
 #allybox-embed ul ul,
 #allybox-embed ol ol,
 #allybox-embed ol ul,
