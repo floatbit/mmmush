@@ -3,15 +3,15 @@
     width: 500px;
     height: 650px;
     border: 1px solid #e0e0e0;
-    padding: 20px 20px 30px 20px;
+    padding: 20px 20px 30px;
     position: fixed;
     bottom: 20px;
     right: 20px;
     background-color: #fff;
     z-index: 1000;
     border-radius: 10px;
-    flex-direction: column;
     display: none;
+    flex-direction: column;
 }
 #allybox-embed a {
     text-decoration: underline;
@@ -20,23 +20,18 @@
 #allybox-embed ol, 
 #allybox-embed ul {
     font-size: 14px;
-    margin-top: 16px;
-    margin-bottom: 20px;
+    margin: 16px 0 20px;
 }
 #allybox-embed ol {
     list-style-type: decimal;
+    padding-left: 20px;
 }
 #allybox-embed ul {
     list-style-type: disc;
-}
-#allybox-embed ol,
-#allybox-embed ul {
     padding-left: 20px;
 }
-#allybox-embed ol li,
-#allybox-embed ul li {
-    margin-top: 10px;
-    margin-bottom: 10px;
+#allybox-embed li {
+    margin: 10px 0;
     padding-left: 10px;
 }
 
@@ -104,7 +99,7 @@
     cursor: pointer;
 }
 #allybox-embed .message {
-    margin: 0 0 15px 0;
+    margin: 0 0 15px;
     padding: 10px 20px;
     border-radius: 10px;
 }
@@ -112,11 +107,9 @@
     background-color: #0693e3;
     color: #fff;
     margin-left: 60px;
-    margin-right: 0px;
 }
 #allybox-embed .message.assistant {
     background-color: #f3f4f6;
-    margin-right: 0px;
 }
 #allybox-embed .message h3 {
     font-size: 16px;

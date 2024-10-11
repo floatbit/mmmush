@@ -271,7 +271,7 @@ async function allybox(config) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.data.thread_embed_id) {
-                        setCookie(cookieName, data.data.thread_embed_id, 7); // Cookie expires in 7 days
+                        setCookie(cookieName, data.data.thread_embed_id, 2000); // Cookie expires in 2000 days
                         resolve(data.data.thread_embed_id);
                         getPreviousMessages(data.data.thread_embed_id, assistantEmbedId); // Call to get previous messages
                     } else {
