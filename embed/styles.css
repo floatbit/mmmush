@@ -73,7 +73,7 @@
 #allybox-chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 100px;
+    padding-bottom: 20px;
 }
 #allybox-chat-form {
     display: flex;
