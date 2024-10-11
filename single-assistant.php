@@ -90,7 +90,7 @@
             </p>
         </div>
         <div>   
-            <h3>Embed Code</h3>
+            <h3>Chatbox Embed Code</h3>
             <?php if ($files) : ?>
             <p>You can add this assistant to your website by copying and pasting the following code.</p>
             <textarea readonly class="textarea textarea-bordered text-sm h-[280px] w-full overflow-hidden">
