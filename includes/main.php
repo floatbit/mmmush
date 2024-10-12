@@ -49,7 +49,7 @@ add_action('login_enqueue_scripts', 'mmmush_custom_login_styles');
  */
 function mmmush_disable_gutenberg_for_post_types($can_edit, $post_type) {
     // Add the post types you want to disable Gutenberg for
-    $disabled_post_types = array('assistant', 'file', 'vector-store');
+    $disabled_post_types = array('assistant', 'file', 'vector-store', 'data-feed');
 
     if (in_array($post_type, $disabled_post_types)) {
         return false;

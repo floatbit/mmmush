@@ -46,6 +46,7 @@ function mmmush_query_vars( $query_vars ){
     $query_vars[] = 'AssistantId';
     $query_vars[] = 'AssistantEmbedId';
     $query_vars[] = 'new';
+    $query_vars[] = 'upload_success';
     return $query_vars;
 }
 
@@ -487,4 +488,88 @@ function mmmush_time_ago($date) {
     } else {
         return ($years == 1) ? "one year ago" : "$years years ago";
     }
+}
+
+// Get an assistant from the assistant embed id
+function mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id) {
+    $assistant = get_posts([
+        'numberposts' => 1,
+        'post_type'   => 'assistant',
+        'meta_key'    => 'assistant_embed_id',
+        'meta_value'  => $assistant_embed_id,
+        'author' => get_current_user_id(),
+    ])[0];
+    return $assistant;
+}
+
+function handle_user_data_feeds_create() {
+    $assistant_embed_id = sanitize_text_field($_POST['AssistantEmbedId']);
+    $feed_url = sanitize_text_field($_POST['feed_url']);
+    $title = sanitize_text_field($_POST['title']);
+    $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
+
+    if ($assistant) {
+        $assistant_id = get_field('assistant_id', $assistant->ID);
+        $vector_store = get_field('vector_stores', $assistant->ID);
+        $vector_store_id = get_field('vector_store_id', $vector_store->ID);
+
+        // upload file to openai
+        $client = OpenAI::client(CHATGPT_API_KEY);
+        $response = $client->files()->upload([
+            'purpose' => 'assistants',
+            'file' => fopen($feed_url, 'r'),
+        ]);
+        $file_id = $response->id;
+
+        // create data feed post
+        $new_post = [
+            'post_type' => 'data-feed',
+            'post_title' => $title,
+            'post_status' => 'publish',
+        ];
+        $new_post_id = wp_insert_post($new_post);
+        update_field('field_6709d7dfe7bb8', $feed_url, $new_post_id);
+        update_field('field_6709d92c2f4db', $file_id, $new_post_id);
+
+        // add data feed to vector store
+        $data_files = get_field('data_feeds', $vector_store->ID);
+        $data_feed_ids = array();
+        foreach ($data_files as $data_feed) {
+            $data_feed_ids[] = $data_feed->ID;
+        }
+        $data_feed_ids[] = $new_post_id;
+        update_field('data_feeds', $data_feed_ids, $vector_store->ID);
+
+        // add data feed to vector store
+        $file_ids = mmmush_get_file_ids_from_vector_store($vector_store->ID);
+        $file_ids[] = $file_id;
+        $response = $client->vectorStores()->batches()->create($vector_store_id, [
+            'file_ids' => $file_ids,
+        ]);
+
+    }
+    // TODO: save json
+    // TODO: save data feed to file
+    // TODO: add data feed to vector store
+
+
+    // Redirect or display a message
+    $redirect_url = '/user/data-feeds/create/?AssistantEmbedId='.$assistant_embed_id.'&upload_success=true';
+    wp_redirect( $redirect_url ); // Redirect after processing
+    exit;
+}
+add_action('admin_post_user_data_feeds_create', 'handle_user_data_feeds_create'); // For logged-in users
+add_action('admin_post_nopriv_user_data_feeds_create', 'handle_user_data_feeds_create');
+
+function mmmush_get_file_ids_from_vector_store($vector_store_id) {
+    $files = get_field('files', $vector_store_id);
+    $data_feeds = get_field('data_feeds', $vector_store_id);
+    $file_ids = [];
+    foreach ($files as $file) {
+        $file_ids[] = get_field('file_id', $file->ID);
+    }
+    foreach ($data_feeds as $data_feed) {
+        $file_ids[] = get_field('file_id', $data_feed->ID);
+    }
+    return $file_ids;
 }

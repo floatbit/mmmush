@@ -85,10 +85,35 @@
                 No files found. 
             </p>
             <?php endif; ?>
-            <p>
-                
-            </p>
         </div>
+
+        <div>
+            <?php 
+                $vector_store = get_field('vector_stores', get_the_ID());
+                $data_feeds = get_field('data_feeds', $vector_store->ID);
+        ?>
+            <h3>Data Feeds <a href="/user/data-feeds/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>" class="btn btn-xs btn-outline ml-2">Add data feed</a></h3>
+            <p>Your assistant will use these data feeds to answer queries.</p>
+            <?php if ($data_feeds) : ?>
+            <p>
+                <ul>
+                    <?php foreach ($data_feeds as $data_feed): ?>
+                        <?php 
+                            $feed_url = get_field('feed_url', $data_feed->ID);
+                        ?>  
+                        <li class="file">
+                            <a href="<?php echo $feed_url; ?>" target="_blank"><?php echo $data_feed->post_title; ?></a> <?php print mmmush_time_ago($data_feed->post_date);?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </p>
+            <?php else: ?>
+            <p>
+                No feeds found. 
+            </p>
+            <?php endif; ?>
+        </div>
+
         <div>   
             <h3>Chatbox Embed Code</h3>
             <?php if ($files) : ?>
