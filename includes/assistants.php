@@ -509,9 +509,8 @@ function handle_user_data_feeds_create() {
     $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
 
     if ($assistant) {
-        $assistant_id = get_field('assistant_id', $assistant->ID);
         $vector_store = get_field('vector_stores', $assistant->ID);
-        $vector_store_id = get_field('vector_store_id', $vector_store->ID);
+        $openai_vector_store_id = get_field('vector_store_id', $vector_store->ID);
 
         // upload file to openai
         $client = OpenAI::client(CHATGPT_API_KEY);
@@ -519,7 +518,7 @@ function handle_user_data_feeds_create() {
             'purpose' => 'assistants',
             'file' => fopen($feed_url, 'r'),
         ]);
-        $file_id = $response->id;
+        $openai_file_id = $response->id;
 
         // create data feed post
         $new_post = [
@@ -529,7 +528,7 @@ function handle_user_data_feeds_create() {
         ];
         $new_post_id = wp_insert_post($new_post);
         update_field('field_6709d7dfe7bb8', $feed_url, $new_post_id);
-        update_field('field_6709d92c2f4db', $file_id, $new_post_id);
+        update_field('field_6709d92c2f4db', $openai_file_id, $new_post_id);
 
         // add data feed to vector store
         $data_files = get_field('data_feeds', $vector_store->ID);
@@ -541,22 +540,13 @@ function handle_user_data_feeds_create() {
         update_field('data_feeds', $data_feed_ids, $vector_store->ID);
 
         // add data feed to vector store
-        $file_ids = mmmush_get_file_ids_from_vector_store($vector_store->ID);
-        $file_ids[] = $file_id;
-        $response = $client->vectorStores()->batches()->create($vector_store_id, [
-            'file_ids' => $file_ids,
-        ]);
+        mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_store_id, $vector_store->ID);
 
+        mmmush_flash_message('Data feed added to assistant <a href="' . get_the_permalink($assistant->ID) . '">' . $assistant->post_title . '</a>.', 'success');
+        $redirect_url = '/user/data-feeds/create/?AssistantEmbedId=' . $assistant_embed_id;
+        wp_redirect($redirect_url);
+        exit;
     }
-    // TODO: save json
-    // TODO: save data feed to file
-    // TODO: add data feed to vector store
-
-
-    // Redirect or display a message
-    $redirect_url = '/user/data-feeds/create/?AssistantEmbedId='.$assistant_embed_id.'&upload_success=true';
-    wp_redirect( $redirect_url ); // Redirect after processing
-    exit;
 }
 add_action('admin_post_user_data_feeds_create', 'handle_user_data_feeds_create'); // For logged-in users
 add_action('admin_post_nopriv_user_data_feeds_create', 'handle_user_data_feeds_create');
@@ -572,4 +562,187 @@ function mmmush_get_file_ids_from_vector_store($vector_store_id) {
         $file_ids[] = get_field('file_id', $data_feed->ID);
     }
     return $file_ids;
+}
+
+function handle_user_data_feeds_delete() {
+    $data_feed_id = sanitize_text_field($_POST['data_feed_id']);
+    $assistant_id = sanitize_text_field($_POST['assistant_id']);
+    $data_feed_post = get_posts([
+        'post_type' => 'data-feed',
+        'p' => $data_feed_id,
+        'numberposts' => 1,
+        'author' => get_current_user_id()
+    ])[0];
+
+    if ($data_feed_post) {
+        // delete openai file
+        $openai_file_id = get_field('file_id', $data_feed_post->ID);
+        if ($openai_file_id) {
+            mmmush_openai_delete_file_from_vector_store($openai_file_id, $assistant_id);
+            mmmush_openai_delete_file($openai_file_id);
+            wp_delete_post($data_feed_post->ID, true);
+        }
+        mmmush_flash_message('Data feed deleted.', 'success');
+        $redirect_url = get_the_permalink($assistant_id);
+        wp_redirect($redirect_url);
+        exit;
+    }
+    wp_redirect('/user/assistants/');
+    exit;
+}
+add_action('admin_post_user_data_feeds_delete', 'handle_user_data_feeds_delete');
+add_action('admin_post_nopriv_user_data_feeds_delete', 'handle_user_data_feeds_delete');
+
+function handle_user_files_delete() {
+    $file_id = sanitize_text_field($_POST['file_id']);
+    $assistant_id = sanitize_text_field($_POST['assistant_id']);
+    $file_post = get_posts([
+        'post_type' => 'file',
+        'p' => $file_id,
+        'numberposts' => 1,
+        'author' => get_current_user_id()
+    ])[0];
+
+    if ($file_post) {
+        // Delete from OpenAI
+        $openai_file_id = get_field('file_id', $file_id);
+        if ($openai_file_id) {
+            mmmush_openai_delete_file_from_vector_store($openai_file_id, $assistant_id);
+            mmmush_openai_delete_file($openai_file_id);
+            $file = get_field('file', $file_post->ID);
+            $media_id = $file['ID'];
+            wp_delete_attachment($media_id, true);
+            wp_delete_post($file_post->ID, true);
+        }
+    }
+    mmmush_flash_message('File deleted.', 'success');
+    $redirect_url = get_the_permalink($assistant_id);
+    wp_redirect($redirect_url);
+    exit;
+}
+
+add_action('admin_post_user_files_delete', 'handle_user_files_delete');
+add_action('admin_post_nopriv_user_files_delete', 'handle_user_files_delete');
+
+function handle_user_files_create() {
+    $assistant_embed_id = sanitize_text_field($_POST['AssistantEmbedId']);
+    $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
+    if ($assistant) {
+        $vector_store = get_field('vector_stores', $assistant->ID);
+        $openai_vector_store_id = get_field('vector_store_id', $vector_store->ID);
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            require_once(ABSPATH . 'wp-admin/includes/media.php');
+    
+            $title = sanitize_text_field(strip_tags($_POST['title']));
+            $file = $_FILES['file'];
+            
+            $uploaded_file = wp_handle_upload($file, ['test_form' => false]);
+    
+            if (isset($uploaded_file['file'])) {
+                $file_name = basename($uploaded_file['file']);
+                $file_type = wp_check_filetype($uploaded_file['file']);
+    
+                // Prepare an array of post data for the attachment.
+                $attachment = [
+                    'guid'           => $uploaded_file['url'],
+                    'post_mime_type' => $file_type['type'],
+                    'post_title'     => $file_name,
+                    'post_content'   => '',
+                    'post_status'    => 'inherit'
+                ];
+    
+                // Insert the attachment.
+                $attach_id = wp_insert_attachment($attachment, $uploaded_file['file']);
+    
+                // Include image.php
+                require_once(ABSPATH . 'wp-admin/includes/image.php');
+    
+                // Generate the metadata for the attachment, and update the database record.
+                $attach_data = wp_generate_attachment_metadata($attach_id, $uploaded_file['file']);
+                wp_update_attachment_metadata($attach_id, $attach_data);
+    
+                // Create a new post of type 'file'
+                $post_data = [
+                    'post_title'   => $title,
+                    'post_status'  => 'publish',
+                    'post_type'    => 'file',
+                    'post_author'  => get_current_user_id(),
+                ];
+    
+                $new_post_id = wp_insert_post($post_data);
+    
+                // Update the ACF field with the attachment ID
+                update_field('field_66f5c2f148394', $attach_id, $new_post_id);
+    
+                // get the file
+                $file = get_field('file', $new_post_id);
+    
+                // upload file to openai
+                $client = OpenAI::client(CHATGPT_API_KEY);
+                $response = $client->files()->upload([
+                    'purpose' => 'assistants',
+                    'file' => fopen($file['url'], 'r'),
+                ]);
+                $openai_file_id = $response->id;
+                // update file id
+                update_field('field_66f5c2e748393', $openai_file_id, $new_post_id);
+    
+                // add file to vector store post
+                $files = get_field('files', $vector_store->ID);
+                $file_ids = array($new_post_id);
+                if ($files) {
+                    foreach ($files as $file) {
+                        $file_ids[] = $file->ID;
+                    }
+                }
+                update_field('field_66f76c4f3450d', $file_ids, $vector_store->ID);
+
+                // add file to vector store
+                mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_store_id, $vector_store->ID);
+
+                mmmush_flash_message('File added to assistant <a href="' . get_the_permalink($assistant->ID) . '">' . $assistant->post_title . '</a>.', 'success');
+                $redirect_url = '/user/files/create/?AssistantEmbedId=' . $assistant_embed_id;
+                wp_redirect($redirect_url);
+                exit;
+            }
+        }
+    }
+}
+add_action('admin_post_user_files_create', 'handle_user_files_create');
+add_action('admin_post_nopriv_user_files_create', 'handle_user_files_create');
+
+function mmmush_flash_message($message, $type = 'success') {
+    $user_id = get_current_user_id();
+    if ($user_id) {
+        $messages = get_transient('user_success_messages_' . $user_id);
+        if (!$messages) {
+            $messages = [];
+        }
+        $messages[] = ['message' => $message, 'type' => $type];
+        set_transient('user_success_messages_' . $user_id, $messages, 3600); // Store for 1 hour
+    }
+}
+
+function mmmush_openai_delete_file($openai_file_id) {
+    $client = OpenAI::client(CHATGPT_API_KEY);
+    $client->files()->delete($openai_file_id);
+}
+
+function mmmush_openai_delete_file_from_vector_store($openai_file_id, $assistant_id) {
+    $vector_store = get_field('vector_stores', $assistant_id);
+    $vector_store_id = get_field('vector_store_id', $vector_store->ID);
+    $client = OpenAI::client(CHATGPT_API_KEY);
+    $client->vectorStores()->files()->delete($vector_store_id, $openai_file_id);
+}
+
+function mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_store_id, $vector_store_id) {
+    $file_ids = mmmush_get_file_ids_from_vector_store($vector_store_id);
+    $file_ids[] = $openai_file_id;
+    $client = OpenAI::client(CHATGPT_API_KEY);
+    $client->vectorStores()->batches()->create($openai_vector_store_id, [
+        'file_ids' => $file_ids,
+    ]);
 }

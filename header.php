@@ -16,3 +16,5 @@
     </div>
 
     <main class="prose-sm max-w-none pt-10 pb-20">
+
+        <?php get_template_part('parts/flash-messages'); ?>
