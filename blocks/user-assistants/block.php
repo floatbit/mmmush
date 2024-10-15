@@ -62,7 +62,7 @@ $assistants = get_posts([
                     </div>
                     <div class="card-actions justify-between items-end">
                         <div class="text-sm lowercase"><?php echo $file_text; ?></div>
-                        <span class="text-xs">changed <?php print mmmush_time_ago($assistant->post_modified); ?></span>
+                        <span class="text-xs">changed <?php print mmmush_time_ago($assistant->post_modified_gmt); ?></span>
                     </div>
                 </div>
             </a>

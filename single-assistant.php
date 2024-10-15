@@ -26,7 +26,7 @@
                             $file_subtype = pathinfo($file_url, PATHINFO_EXTENSION);
                         ?>  
                         <li class="file">
-                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>) <?php print mmmush_time_ago($file->post_date);?>
+                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>) <?php print mmmush_time_ago($file->post_date_gmt);?>
                             <form method="POST" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" class="inline">
                                 <input type="hidden" name="action" value="user_files_delete">
                                 <input type="hidden" name="assistant_id" value="<?php echo get_the_ID(); ?>">
@@ -60,7 +60,7 @@
                             $feed_url = get_field('feed_url', $data_feed->ID);
                         ?>  
                         <li class="file">
-                            <a href="<?php echo $feed_url; ?>" target="_blank"><?php echo $data_feed->post_title; ?></a> <?php print mmmush_time_ago($data_feed->post_date);?>
+                            <a href="<?php echo $feed_url; ?>" target="_blank"><?php echo $data_feed->post_title; ?></a> <?php print mmmush_time_ago($data_feed->post_date_gmt);?>
                             <form method="POST" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" class="inline">
                                 <input type="hidden" name="action" value="user_data_feeds_delete">
                                 <input type="hidden" name="assistant_id" value="<?php echo get_the_ID(); ?>">
