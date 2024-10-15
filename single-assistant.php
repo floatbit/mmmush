@@ -81,7 +81,7 @@
 
         <div>   
             <h3>Chatbox Embed Code</h3>
-            <?php if ($files) : ?>
+            <?php if ($files || $data_feeds) : ?>
             <p>You can add this assistant to your website by copying and pasting the following code.</p>
             <textarea readonly class="textarea textarea-bordered text-sm h-[280px] w-full overflow-hidden">
 &lt;div id=&quot;allybox-embed&quot;&gt;
@@ -98,20 +98,7 @@
 &lt;/script&gt;
             </textarea>
             <?php else: ?>
-            <p role="alert" class="alert alert-warning">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 shrink-0 stroke-current"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span><a href="/user/files/create?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>">Upload files</a> to your assistant to enable embedding.</span>
-            </p>
+            <p>Upload files or data feeds to your assistant to enable embedding.</p>
             <?php endif; ?>
         </div>
 
