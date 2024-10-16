@@ -25,8 +25,6 @@ if ( ! empty( $block['align'] ) ) {
     $classes .= ' align' . $block['align'];
 }
 
-$upload_success = get_query_var('upload_success', FALSE);
-
 $assistant_embed_id = get_query_var('AssistantEmbedId', '');
 
 $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
@@ -43,23 +41,6 @@ $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
         </ul>
 
         <div class="grid gap-x-8 grid-cols-1 max-w-[720px]">
-
-            <?php if ($upload_success) : ?>
-            <p role="alert" class="alert alert-success">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 shrink-0 stroke-current"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Data feed added to <a href="<?php print get_the_permalink($assistant->ID); ?>">your assistant</a></span>
-            </p>
-            <?php endif;?>
 
             <h2>Add a data feed to <em><?php echo $assistant->post_title; ?></em></h2>
             <p>Your assistant will use this feed to answer queries. Only <strong>JSON</strong> files are supported at this time.</p>

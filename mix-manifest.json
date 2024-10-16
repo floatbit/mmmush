@@ -1,12 +1,13 @@
 {
-    "/dist/app.js": "/dist/app.js",
-    "/dist/blocks/text.js": "/dist/blocks/text.js",
-    "/dist/app.css": "/dist/app.css",
-    "/dist/images/sample-image.jpg": "/dist/images/sample-image.jpg",
-    "/dist/fonts/inter/Inter-Bold.woff": "/dist/fonts/inter/Inter-Bold.woff",
-    "/dist/fonts/inter/Inter-Bold.woff2": "/dist/fonts/inter/Inter-Bold.woff2",
-    "/dist/fonts/inter/Inter-Medium.woff": "/dist/fonts/inter/Inter-Medium.woff",
-    "/dist/fonts/inter/Inter-Medium.woff2": "/dist/fonts/inter/Inter-Medium.woff2",
-    "/dist/fonts/inter/Inter-Regular.woff": "/dist/fonts/inter/Inter-Regular.woff",
-    "/dist/fonts/inter/Inter-Regular.woff2": "/dist/fonts/inter/Inter-Regular.woff2"
+    "/dist/app.js": "/dist/app.js?id=4808edb2deabfdfd7b5243e6ddfba897",
+    "/dist/blocks/text.js": "/dist/blocks/text.js?id=d41d8cd98f00b204e9800998ecf8427e",
+    "/dist/editor.css": "/dist/editor.css?id=a647b49cf28e980b4ae2e4a88236a55a",
+    "/dist/app.css": "/dist/app.css?id=22981d3220c8f7f9f2103d2ba04cb122",
+    "/dist/images/sample-image.jpg": "/dist/images/sample-image.jpg?id=51bfbe0c2d3bc8df0460c0f6f4b8d288",
+    "/dist/fonts/inter/Inter-Bold.woff": "/dist/fonts/inter/Inter-Bold.woff?id=30c82e2fe5430c4ac19e6db480a40730",
+    "/dist/fonts/inter/Inter-Bold.woff2": "/dist/fonts/inter/Inter-Bold.woff2?id=2bdb1fb3ddb113468239c9dfa9889ecf",
+    "/dist/fonts/inter/Inter-Medium.woff": "/dist/fonts/inter/Inter-Medium.woff?id=3d54c2db84475987ec21de0943859abc",
+    "/dist/fonts/inter/Inter-Medium.woff2": "/dist/fonts/inter/Inter-Medium.woff2?id=474e3d5a2d3cdd48ad8924807e2278e4",
+    "/dist/fonts/inter/Inter-Regular.woff": "/dist/fonts/inter/Inter-Regular.woff?id=c4fc5570d8d2a06d44531af4b11e1fd6",
+    "/dist/fonts/inter/Inter-Regular.woff2": "/dist/fonts/inter/Inter-Regular.woff2?id=f5af1f40cf0210f374cece0e369a988e"
 }

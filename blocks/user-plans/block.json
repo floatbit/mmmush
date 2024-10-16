@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "acf/user-plans",
+  "title": "User Plans",
+  "description": "",
+  "category": "mmmush",
+  "keywords": ["user-plans"],
+  "_viewScript": ["blocks/user-plans"],
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "block.php"
+  }
+}
