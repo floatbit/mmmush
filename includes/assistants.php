@@ -7,6 +7,7 @@ require_once get_template_directory() . '/vendor/autoload.php';
 require_once get_template_directory() . '/includes/secrets.php';
 
 define('MMUSH_FIXED_INSTRUCTIONS', ' Your responses should solely draw from the content and data provided in the files you have been given. If you do not know the answer, say something like, “I cannot answer from the data given to me.” Respond to queries without including any citations, references, or text inside brackets (e.g., [source]), and without indicating source numbers or references of any kind. Do not include any concluding statements, such as offering suggestions, asking for feedback, or inviting further questions.');
+define('MMUSH_DEFAULT_MODEL', 'gpt-4o-mini');
 
 add_action('template_redirect', function() {
     // callback for assistant message
@@ -746,3 +747,116 @@ function mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_
         'file_ids' => $file_ids,
     ]);
 }
+
+function handle_user_assistants_edit() {
+    $assistant_embed_id = sanitize_text_field($_POST['AssistantEmbedId']);
+    $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
+    if ($assistant) {
+        $assistant_id = get_field('assistant_id', $assistant->ID);
+        $title = sanitize_text_field(strip_tags($_POST['title']));
+        $description = sanitize_textarea_field(strip_tags($_POST['description']));
+
+        if ($title && $description) {
+            // update assistant in wp
+            wp_update_post([
+                'ID'           => $assistant->ID,
+                'post_title'   => $title,
+                'post_content' => $description,
+            ]);
+
+            // update assistant in openai
+            $client = OpenAI::client(CHATGPT_API_KEY);
+            $response = $client->assistants()->modify($assistant_id, [
+                'name' => $title,
+                'instructions' => $description . PHP_EOL . PHP_EOL . MMUSH_FIXED_INSTRUCTIONS,
+                'temperature' => 0.5,
+            ]);
+
+            mmmush_flash_message('Assistant updated.', 'success');
+            $redirect_url = '/user/assistants/edit/?AssistantEmbedId=' . $assistant_embed_id;
+            wp_redirect($redirect_url);
+            exit;
+        }
+    }
+    
+}
+add_action('admin_post_user_assistants_edit', 'handle_user_assistants_edit');
+add_action('admin_post_nopriv_user_assistants_edit', 'handle_user_assistants_edit');
+
+function handle_user_assistants_create() {
+    $new = sanitize_text_field($_POST['new']);
+    $title = sanitize_text_field(strip_tags($_POST['title']));
+    $description = sanitize_textarea_field(strip_tags($_POST['description']));
+
+    if ($title && $description) {
+        // create assistant
+        $post_data = array(
+            'post_title'   => $title,
+            'post_content' => $description,
+            'post_status'  => 'publish',
+            'post_type'    => 'assistant',
+            'post_author'  => get_current_user_id(),
+        );
+
+        $new_post_id = wp_insert_post($post_data);
+        $post = get_post($new_post_id);
+        
+        // create assistant on openai
+        $client = OpenAI::client(CHATGPT_API_KEY);
+
+        $response = $client->assistants()->create([
+            'name' => $post->post_title,
+            'instructions' => $instructions,
+            'temperature' => 0.5,
+            'tools' => [
+                [
+                    'type' => 'file_search', 
+                ],
+            ],
+            'model' => MMUSH_DEFAULT_MODEL,
+        ]);
+        $assistant_id = $response->id;
+
+        // update assistant id on post
+        $unique_id = uniqid();
+        update_field('field_66f5b63711fc3', $assistant_id, $post->ID);
+        update_field('field_66f9e904b7204', $unique_id, $post->ID);
+
+        // create default vector store for this assistant
+        $new_vector_store_id = mmmush_create_default_vector_store($assistant_id,$post);
+        update_field('field_66f76eb6e5e74', [$new_vector_store_id], $post->ID);
+
+        // create vector store on openai
+        $assistant_id = get_field('assistant_id', $post->ID);
+        $vector_stores = get_field('vector_stores', $post->ID);
+        $instructions = $description . PHP_EOL . PHP_EOL . MMUSH_FIXED_INSTRUCTIONS;
+        if ($vector_stores) {
+            $vector_store_ids = [];
+            $vector_store_ids[] = get_field('vector_store_id', $vector_stores->ID);
+            $client = OpenAI::client(CHATGPT_API_KEY);
+            $data  = [
+                'instructions' => $instructions,
+                'name' => $post->post_title,
+                'tools' => [
+                    [
+                        'type' => 'file_search', 
+                    ],
+                ],
+                'tool_resources' => [
+                    'file_search' => [
+                        'vector_store_ids' => $vector_store_ids,
+                    ],
+                ],
+                'model' => MMUSH_DEFAULT_MODEL
+            ];
+            $response = $client->assistants()->modify($assistant_id, $data);
+        }
+
+        mmmush_flash_message('Assistant created.', 'success');
+        $redirect_url = '/user/files/create/?new=' . $new . '&AssistantEmbedId=' . $unique_id;
+        wp_redirect($redirect_url);
+        exit;
+    }
+}
+add_action('admin_post_user_assistants_create', 'handle_user_assistants_create');
+add_action('admin_post_nopriv_user_assistants_create', 'handle_user_assistants_create');

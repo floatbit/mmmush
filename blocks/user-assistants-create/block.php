@@ -27,78 +27,6 @@ if ( ! empty( $block['align'] ) ) {
 
 $new = get_query_var('new', 0);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = sanitize_text_field(strip_tags($_POST['title']));
-    $description = sanitize_textarea_field(strip_tags($_POST['description']));
-
-    if ($title && $description) {
-        // create assistant
-        $post_data = array(
-            'post_title'   => $title,
-            'post_content' => $description,
-            'post_status'  => 'publish',
-            'post_type'    => 'assistant',
-            'post_author'  => get_current_user_id(),
-        );
-
-        $new_post_id = wp_insert_post($post_data);
-        $post = get_post($new_post_id);
-        
-        // create assistant on openai
-        $client = OpenAI::client(CHATGPT_API_KEY);
-
-        $response = $client->assistants()->create([
-            'name' => $post->post_title,
-            'instructions' => $instructions,
-            'temperature' => 0.5,
-            'tools' => [
-                [
-                    'type' => 'file_search', 
-                ],
-            ],
-            'model' => 'gpt-4o-mini',
-        ]);
-        $assistant_id = $response->id;
-
-        // update assistant id on post
-        $unique_id = uniqid();
-        update_field('field_66f5b63711fc3', $assistant_id, $post->ID);
-        update_field('field_66f9e904b7204', $unique_id, $post->ID);
-
-        // create default vector store for this assistant
-        $new_vector_store_id = mmmush_create_default_vector_store($assistant_id,$post);
-        update_field('field_66f76eb6e5e74', [$new_vector_store_id], $post->ID);
-
-        // create vector store on openai
-        $assistant_id = get_field('assistant_id', $post->ID);
-        $vector_stores = get_field('vector_stores', $post->ID);
-        $instructions = $description . PHP_EOL . PHP_EOL . MMUSH_FIXED_INSTRUCTIONS;
-        if ($vector_stores) {
-            $vector_store_ids = [];
-            $vector_store_ids[] = get_field('vector_store_id', $vector_stores->ID);
-            $client = OpenAI::client(CHATGPT_API_KEY);
-            $data  = [
-                'instructions' => $instructions,
-                'name' => $post->post_title,
-                'tools' => [
-                    [
-                        'type' => 'file_search', 
-                    ],
-                ],
-                'tool_resources' => [
-                    'file_search' => [
-                        'vector_store_ids' => $vector_store_ids,
-                    ],
-                ],
-                'model' => 'gpt-4o-mini',
-            ];
-            $response = $client->assistants()->modify($assistant_id, $data);
-        }
-        echo "<script type='text/javascript'>window.location.href = '/user/files/create/?new=$new&AssistantEmbedId=$unique_id';</script>";
-        exit;
-    }
-}
-
 ?>
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
@@ -118,7 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php else : ?>
                 <h2>Add a new assistant</h2>
             <?php endif; ?>
-            <form action="<?php print get_the_permalink(); ?>?new=<?php print $new; ?>" method="POST">
+            <form action="<?php print esc_url(admin_url('admin-post.php')); ?>" method="POST">
+                <input type="hidden" name="action" value="user_assistants_create">
+                <input type="hidden" name="new" value="<?php print $new; ?>">
                 <label class="form-control w-full mt-5 mb-10">
                     <div class="label">
                         <span class="label-text"><strong>Assistant's name</strong></span>

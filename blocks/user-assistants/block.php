@@ -51,18 +51,9 @@ $assistants = get_posts([
                         <div class="description mb-10">
                             <p class="font-normal text-gray-500"><?php echo $assistant->post_content; ?></p>
                         </div>
-                        <div>
-                            <p class="hidden"><span class="font-bold">Binder</span><br> <?php echo $vector_store->post_title; ?></p>
-                            <?php if (is_array($files) && count($files) > 0) {
-                                    $file_text = count($files) . ' ' . (count($files) == 1 ? 'File' : 'Files');
-                            } else {
-                                $file_text = 'No files';
-                            }?>
-                        </div>
                     </div>
                     <div class="card-actions justify-between items-end">
-                        <div class="text-sm lowercase"><?php echo $file_text; ?></div>
-                        <span class="text-xs">changed <?php print mmmush_time_ago($assistant->post_modified_gmt); ?></span>
+                        <span class="text-xs">updated <?php print mmmush_time_ago($assistant->post_modified_gmt); ?></span>
                     </div>
                 </div>
             </a>
