@@ -32,7 +32,7 @@
                                 <input type="hidden" name="assistant_id" value="<?php echo get_the_ID(); ?>">
                                 <input type="hidden" name="file_id" value="<?php echo $file->ID; ?>">
                                 <button class="btn btn-xs btn-warning hidden delete-file ml-2">Delete</button>
-                                <input type="submit" value="Confirm deletion" class="btn btn-xs btn-error hidden confirm-delete-file ml-2">
+                                <input type="submit" value="Really delete?" class="btn btn-xs btn-error hidden confirm-delete-file ml-2">
                             </form>
                         </li>
                     <?php endforeach; ?>
@@ -65,7 +65,7 @@
                                 <input type="hidden" name="action" value="user_data_feeds_delete">
                                 <input type="hidden" name="assistant_id" value="<?php echo get_the_ID(); ?>">
                                 <button class="btn btn-xs btn-warning hidden delete-file ml-2">Delete</button>
-                                <input type="submit" value="Confirm deletion" class="btn btn-xs btn-error hidden confirm-delete-file ml-2">
+                                <input type="submit" value="Really delete?" class="btn btn-xs btn-error hidden confirm-delete-file ml-2">
                                 <input type="hidden" name="data_feed_id" value="<?php echo $data_feed->ID; ?>">
                             </form>
                         </li>
