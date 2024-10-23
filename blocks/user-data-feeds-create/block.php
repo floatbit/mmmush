@@ -50,10 +50,10 @@ $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
                 <input type="hidden" name="AssistantEmbedId" value="<?php echo $assistant_embed_id; ?>" />
                 <label class="form-control w-full mt-5 mb-10">
                     <div class="label">
-                        <span class="label-text"><strong>Title of the file</strong></span>
+                        <span class="label-text"><strong>Feed Name</strong></span>
                     </div>
                     <div class="indicator w-full">
-                        <input type="title" name="title" placeholder="For example: 2023-2024 Mid-Century Collections" class="input input-bordered w-full text-sm" />
+                        <input type="title" name="title" placeholder="For example: Events and Blog JSON Feed" class="input input-bordered w-full text-sm" />
                         <span class="indicator-item badge">Required</span>
                     </div>
                 </label>
