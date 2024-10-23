@@ -26,7 +26,7 @@
                             $file_subtype = pathinfo($file_url, PATHINFO_EXTENSION);
                         ?>  
                         <li class="file">
-                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> (<?php echo $file_subtype; ?>) <?php print mmmush_time_ago($file->post_date_gmt);?>
+                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file->post_title; ?></a> <em><?php print mmmush_time_ago($file->post_date_gmt);?></em>
                             <form method="POST" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" class="inline">
                                 <input type="hidden" name="action" value="user_files_delete">
                                 <input type="hidden" name="assistant_id" value="<?php echo get_the_ID(); ?>">

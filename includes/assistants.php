@@ -666,6 +666,9 @@ function handle_user_files_create() {
                 wp_update_attachment_metadata($attach_id, $attach_data);
     
                 // Create a new post of type 'file'
+                if (empty($title)) {
+                    $title = $file_name;
+                }
                 $post_data = [
                     'post_title'   => $title,
                     'post_status'  => 'publish',
@@ -704,7 +707,7 @@ function handle_user_files_create() {
                 // add file to vector store
                 mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_store_id, $vector_store->ID);
 
-                mmmush_flash_message('File added to assistant <a href="' . get_the_permalink($assistant->ID) . '">' . $assistant->post_title . '</a>.', 'success');
+                mmmush_flash_message('<em>' . $title . '</em> added to assistant <a href="' . get_the_permalink($assistant->ID) . '">' . $assistant->post_title . '</a>.', 'success');
                 $redirect_url = '/user/files/create/?AssistantEmbedId=' . $assistant_embed_id;
                 wp_redirect($redirect_url);
                 exit;
