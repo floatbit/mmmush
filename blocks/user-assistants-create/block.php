@@ -27,6 +27,7 @@ if ( ! empty( $block['align'] ) ) {
 
 $new = get_query_var('new', 0);
 
+$default_instructions = 'You are a data-driven assistant designed to retrieve, analyze, and present information based solely on the files or data sources attached to you. Your responses should be clear, accurate, and directly related to the user’s query. Use only the data provided; do not rely on external sources or make assumptions beyond what you have access to. When responding, ensure that results are organized and presented in a way that is easy to understand, using bullet points or paragraphs as needed. Always verify the information for accuracy before providing it to the user. If the requested data is unavailable, clearly indicate that it cannot be found within the provided sources. Your goal is to offer concise, actionable insights that fulfill the user’s request while maintaining clarity and precision.';
 ?>
 
 <div id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $classes ); ?>">
@@ -63,7 +64,7 @@ $new = get_query_var('new', 0);
                         <span class="label-text"><strong>Describe your assistant</strong></span>
                     </div>
                     <div class="indicator w-full">
-                        <textarea name="description" class="textarea textarea-bordered text-sm h-[300px] w-full" placeholder="For example: You are the chief curator of a world-renowned museum. You curate art collections, provide historical context on artworks, and manage exhibition logistics. Using your museum’s extensive data files, you offer detailed insights into specific pieces, artists, and historical periods. Respond to questions about art history, artists, exhibit planning, and your museum’s collection."></textarea>    
+                        <textarea name="description" class="textarea textarea-bordered text-sm h-[300px] w-full" placeholder="For example: You are the chief curator of a world-renowned museum. You curate art collections, provide historical context on artworks, and manage exhibition logistics. Using your museum’s extensive data files, you offer detailed insights into specific pieces, artists, and historical periods. Respond to questions about art history, artists, exhibit planning, and your museum’s collection."><?php print $default_instructions;?></textarea>
                         <span class="indicator-item badge">Required</span>
                     </div>
                 </label>

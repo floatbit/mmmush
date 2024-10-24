@@ -5,7 +5,17 @@
         
         <div>
             <h2><?php the_title(); ?> <a class="btn btn-xs btn-outline ml-2" href="/user/assistants/edit?AssistantEmbedId=<?php echo get_field('assistant_embed_id'); ?>">Edit</a></h2>
-            <?php the_content(); ?>
+            <div class="instructions">
+                <?php $instructions = $post->post_content; ?>
+                <div class="text">
+                    <?php echo apply_filters('the_content', $instructions); ?>
+                </div>
+                <div class="show-more">
+                    <p>
+                        <a href="#" class="">Show more</a>
+                    </p>
+                </div>
+            </div>
         </div>
         <div>
             <?php 
@@ -105,6 +115,7 @@
     </div>
 </div>
 
+<?php if ($files || $data_feeds) : ?>
 <div id="allybox-embed" class="shadow-xl">
     <h3><?php the_title(); ?></h3>
     <div id="allybox-chat-container"></div>
@@ -114,6 +125,7 @@
 <?php else : ?>
     <script src="https://dashboard.allybox.app/embed/thread.js"></script>
 <?php endif; ?>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         allybox({
@@ -121,5 +133,6 @@
         });
     });
 </script>
+<?php endif; ?>
 
 <?php get_footer(); ?>

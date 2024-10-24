@@ -6,6 +6,7 @@ export default class SingleAssistant {
 
   init() {
     this.setupDeleteFileButtons();
+    this.setupShowMoreButton();
   }
 
   setupDeleteFileButtons() {
@@ -26,6 +27,20 @@ export default class SingleAssistant {
         confirmButton.classList.add('hidden');
         
       });
+    });
+  }
+
+  setupShowMoreButton() {
+    const showMoreButton = this.el.querySelector('.show-more');
+    showMoreButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.el.classList.toggle('instructions-expanded');
+      // Add the class to div.instructions
+      const instructionsDiv = this.el.querySelector('div.instructions');
+      instructionsDiv.classList.toggle('instructions-expanded');
+      
+      // Remove the show more button
+      showMoreButton.classList.add('hidden'); // or showMoreButton.style.display = 'none';
     });
   }
 }

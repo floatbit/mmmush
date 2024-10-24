@@ -18,6 +18,18 @@
         }
     }
 
+    .instructions {
+        .text {
+            max-height: 110px;
+            overflow-y: hidden;
+        }
+    }
+    .instructions.instructions-expanded {
+        .text {
+            max-height: none;
+        }
+    }
+
     #allybox-embed {
         height: calc(100vh - 230px);
         min-height: 500px;

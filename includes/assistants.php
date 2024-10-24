@@ -6,7 +6,15 @@ require_once get_template_directory() . '/vendor/autoload.php';
 // Include the secrets file
 require_once get_template_directory() . '/includes/secrets.php';
 
-define('MMUSH_FIXED_INSTRUCTIONS', ' Your responses should solely draw from the content and data provided in the files you have been given. If you do not know the answer, say something like, “I cannot answer from the data given to me.” Respond to queries without including any citations, references, or text inside brackets (e.g., [source]), and without indicating source numbers or references of any kind. Do not include any concluding statements, such as offering suggestions, asking for feedback, or inviting further questions.');
+define('MMUSH_FIXED_INSTRUCTIONS', "
+IMPORTANT:
+- Use only the provided files for your responses.
+- If the answer is not in the data, respond with: 'I cannot answer from the data given to me.'
+- Avoid citations, references, or any text inside brackets (e.g., [source]) and do not use source numbers.
+- Exclude concluding statements like suggestions, feedback requests, or invitations for further questions.
+- Review the data to ensure accuracy before finalizing your response.
+- If uncertain about specific information, ask for further clarification from the data rather than providing an inaccurate answer.
+");
 define('MMUSH_DEFAULT_MODEL', 'gpt-4o-mini');
 
 add_action('template_redirect', function() {
