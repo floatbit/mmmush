@@ -645,81 +645,100 @@ function handle_user_files_create() {
             require_once(ABSPATH . 'wp-admin/includes/file.php');
             require_once(ABSPATH . 'wp-admin/includes/media.php');
     
-            $title = sanitize_text_field(strip_tags($_POST['title']));
-            $file = $_FILES['file'];
-            
-            $uploaded_file = wp_handle_upload($file, ['test_form' => false]);
-    
-            if (isset($uploaded_file['file'])) {
-                $file_name = basename($uploaded_file['file']);
-                $file_type = wp_check_filetype($uploaded_file['file']);
-    
-                // Prepare an array of post data for the attachment.
-                $attachment = [
-                    'guid'           => $uploaded_file['url'],
-                    'post_mime_type' => $file_type['type'],
-                    'post_title'     => $file_name,
-                    'post_content'   => '',
-                    'post_status'    => 'inherit'
-                ];
-    
-                // Insert the attachment.
-                $attach_id = wp_insert_attachment($attachment, $uploaded_file['file']);
-    
-                // Include image.php
-                require_once(ABSPATH . 'wp-admin/includes/image.php');
-    
-                // Generate the metadata for the attachment, and update the database record.
-                $attach_data = wp_generate_attachment_metadata($attach_id, $uploaded_file['file']);
-                wp_update_attachment_metadata($attach_id, $attach_data);
-    
-                // Create a new post of type 'file'
-                if (empty($title)) {
-                    $title = $file_name;
-                }
-                $post_data = [
-                    'post_title'   => $title,
-                    'post_status'  => 'publish',
-                    'post_type'    => 'file',
-                    'post_author'  => get_current_user_id(),
-                ];
-    
-                $new_post_id = wp_insert_post($post_data);
-    
-                // Update the ACF field with the attachment ID
-                update_field('field_66f5c2f148394', $attach_id, $new_post_id);
-    
-                // get the file
-                $file = get_field('file', $new_post_id);
-    
-                // upload file to openai
-                $client = OpenAI::client(CHATGPT_API_KEY);
-                $response = $client->files()->upload([
-                    'purpose' => 'assistants',
-                    'file' => fopen($file['url'], 'r'),
-                ]);
-                $openai_file_id = $response->id;
-                // update file id
-                update_field('field_66f5c2e748393', $openai_file_id, $new_post_id);
-    
-                // add file to vector store post
-                $files = get_field('files', $vector_store->ID);
-                $file_ids = array($new_post_id);
-                if ($files) {
-                    foreach ($files as $file) {
-                        $file_ids[] = $file->ID;
-                    }
-                }
-                update_field('field_66f76c4f3450d', $file_ids, $vector_store->ID);
 
-                // add file to vector store
-                mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_store_id, $vector_store->ID);
-
-                mmmush_flash_message('<em>' . $title . '</em> added to assistant <a href="' . get_the_permalink($assistant->ID) . '">' . $assistant->post_title . '</a>.', 'success');
-                $redirect_url = '/user/files/create/?AssistantEmbedId=' . $assistant_embed_id;
-                wp_redirect($redirect_url);
-                exit;
+            $files = array();
+    
+            if (isset($_FILES['file1']['name'])) {
+                $files[] = $_FILES['file1'];
             }
+            if (isset($_FILES['file2']['name'])) {
+                $files[] = $_FILES['file2'];
+            }
+            if (isset($_FILES['file3']['name'])) {
+                $files[] = $_FILES['file3'];
+            }
+            if (isset($_FILES['file4']['name'])) {
+                $files[] = $_FILES['file4'];
+            }
+            if (isset($_FILES['file5']['name'])) {
+                $files[] = $_FILES['file5'];
+            }
+            
+            // Loop through each file
+            foreach ($files as $file) {
+                $uploaded_file = wp_handle_upload($file, ['test_form' => false]);
+
+                if (isset($uploaded_file['file'])) {
+                    $file_name = basename($uploaded_file['file']);
+                    $file_type = wp_check_filetype($uploaded_file['file']);
+
+                    // Prepare an array of post data for the attachment.
+                    $attachment = [
+                        'guid'           => $uploaded_file['url'],
+                        'post_mime_type' => $file_type['type'],
+                        'post_title'     => $file_name,
+                        'post_content'   => '',
+                        'post_status'    => 'inherit'
+                    ];
+
+                    // Insert the attachment.
+                    $attach_id = wp_insert_attachment($attachment, $uploaded_file['file']);
+
+                    // Include image.php
+                    require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+                    // Generate the metadata for the attachment, and update the database record.
+                    $attach_data = wp_generate_attachment_metadata($attach_id, $uploaded_file['file']);
+                    wp_update_attachment_metadata($attach_id, $attach_data);
+
+                    // Create a new post of type 'file'
+                    $post_data = [
+                        'post_title'   => $file_name,
+                        'post_status'  => 'publish',
+                        'post_type'    => 'file',
+                        'post_author'  => get_current_user_id(),
+                    ];
+
+                    $new_post_id = wp_insert_post($post_data);
+
+                    // Update the ACF field with the attachment ID
+                    update_field('field_66f5c2f148394', $attach_id, $new_post_id);
+
+                    // get the file
+                    $file = get_field('file', $new_post_id);
+
+                    // upload file to openai
+                    $client = OpenAI::client(CHATGPT_API_KEY);
+                    $response = $client->files()->upload([
+                        'purpose' => 'assistants',
+                        'file' => fopen($file['url'], 'r'),
+                    ]);
+                    $openai_file_id = $response->id;
+                    // update file id
+                    update_field('field_66f5c2e748393', $openai_file_id, $new_post_id);
+
+                    // add file to vector store post
+                    $files = get_field('files', $vector_store->ID);
+                    $file_ids = array($new_post_id);
+                    if ($files) {
+                        foreach ($files as $file) {
+                            $file_ids[] = $file->ID;
+                        }
+                    }
+                    update_field('field_66f76c4f3450d', $file_ids, $vector_store->ID);
+
+                    // add file to vector store
+                    mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_store_id, $vector_store->ID);
+
+                    // Flash message for each file
+                    mmmush_flash_message('<em>' . $file_name . '</em> added to assistant <a href="' . get_the_permalink($assistant->ID) . '">' . $assistant->post_title . '</a>.', 'success');
+                }
+            }
+
+            // Redirect after processing all files
+            $redirect_url = '/user/files/create/?AssistantEmbedId=' . $assistant_embed_id;
+            wp_redirect($redirect_url);
+            exit;
         }
     }
 }

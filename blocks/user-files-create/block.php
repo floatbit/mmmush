@@ -54,7 +54,7 @@ $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
                 <p>By uploading comprehensive files, you enhance the assistant’s ability to assist users effectively. The more relevant and informative the materials, the better the assistant can draw from its knowledge base, ensuring that interactions are both insightful and engaging.</p>
             <?php else : ?>
                 <h2>Add a file to <em><?php echo $assistant->post_title; ?></em></h2>
-                <p>Your assistant will use this file to answer queries.</p>
+                <p>Your assistant will use this file to answer queries. Only <strong>pdf, json, and txt</strong> files are supported.</p>
             <?php endif; ?>
 
             <form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="POST" enctype="multipart/form-data">
@@ -62,22 +62,43 @@ $assistant = mmmush_get_assistant_from_assistant_embed_id($assistant_embed_id);
                 <input type="hidden" name="AssistantEmbedId" value="<?php echo $assistant_embed_id; ?>" />
                 <input type="hidden" name="new" value="<?php echo $new; ?>" />
                 <label class="form-control w-full mb-10">
-                    <div class="label">
-                        <span class="label-text"><strong>Select File</strong></span>
+                    <div class="label hidden">
+                        <span class="label-text"><strong>Select Files</strong></span>
                     </div>
                     <div class="indicator w-full">
-                        <input type="file" name="file" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.json" /> 
+                        <input type="file" name="file1" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.json" /> 
                         <span class="indicator-item badge hidden">Required</span>
                     </div>
-                    <div class="label">
+                    <div class="label hidden">
                         <span class="label-text-alt">Accepted file types: pdf json txt</span>
                         <span class="label-text-alt">Max 15MB</span>
                     </div>
                 </label>
-                <label class="form-control w-full mt-5 mb-10 hidden">
-                    <div class="label">
-                        <span class="label-text"><strong>Title of the file</strong></span>
+                <label class="form-control w-full mb-10">
+                    <div class="indicator w-full">
+                        <input type="file" name="file2" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.json" /> 
+                        <span class="indicator-item badge hidden">Required</span>
                     </div>
+                </label>
+                <label class="form-control w-full mb-10">
+                    <div class="indicator w-full">
+                        <input type="file" name="file3" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.json" /> 
+                        <span class="indicator-item badge hidden">Required</span>
+                    </div>
+                </label>
+                <label class="form-control w-full mb-10">
+                    <div class="indicator w-full">
+                        <input type="file" name="file4" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.json" /> 
+                        <span class="indicator-item badge hidden">Required</span>
+                    </div>
+                </label>
+                <label class="form-control w-full mb-10">
+                    <div class="indicator w-full">
+                        <input type="file" name="file5" class="file-input file-input-bordered w-full text-sm" accept=".pdf,.txt,.json" /> 
+                        <span class="indicator-item badge hidden">Required</span>
+                    </div>
+                </label>
+                <label class="form-control w-full mt-5 mb-10 hidden">
                     <div class="indicator w-full">
                         <input type="text" name="title" placeholder="For example: 2023-2024 Mid-Century Collections" class="input input-bordered w-full text-sm" />
                         <span class="indicator-item badge">optional</span>
