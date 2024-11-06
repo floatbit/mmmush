@@ -1,6 +1,6 @@
 const allyboxScriptElement = document.currentScript;
 const allyboxScriptSrc = allyboxScriptElement.src;
-const ALLYBOX_BASE_URL = new URL(allyboxScriptSrc).origin;
+const allyboxBaseUrl = new URL(allyboxScriptSrc).origin;
 
 // This function initializes the allybox chat interface.
 async function allybox(config) {
@@ -8,12 +8,12 @@ async function allybox(config) {
     const chatContainer = document.getElementById('allybox-chat-container');
 
     const markedScript = document.createElement('script');
-    markedScript.src = `${ALLYBOX_BASE_URL}/embed/marked.min.js`;
+    markedScript.src = `${allyboxBaseUrl}/embed/marked.min.js`;
     document.head.appendChild(markedScript);
 
     const styleSheet = document.createElement('link');
     styleSheet.rel = 'stylesheet';
-    styleSheet.href = `${ALLYBOX_BASE_URL}/embed/styles.css`;
+    styleSheet.href = `${allyboxBaseUrl}/embed/styles.css`;
     document.head.appendChild(styleSheet);
 
 
@@ -47,7 +47,7 @@ async function allybox(config) {
         const messageInput = document.getElementById('allybox-message-input');
         const submitButton = form.querySelector('button[type="submit"]');
         const loadingMessage = form.querySelector('.loader');
-        const endpoint = `${ALLYBOX_BASE_URL}/am-endpoint/`;
+        const endpoint = `${allyboxBaseUrl}/am-endpoint/`;
         const stopMessage = form.querySelector('.stop-message');
         const assistantEmbedId = document.querySelector('input[name="assistantEmbedId"]').value;
         let eventSource = null;
@@ -129,7 +129,11 @@ async function allybox(config) {
             function addMessage(type, content) {
                 const messageElement = document.createElement('div');
                 messageElement.className = `message ${type}`;
-                messageElement.textContent = content;
+                if (type === 'assistant') {
+                    messageElement.innerHTML = '<span class="assistant-loading"></span>';
+                } else {
+                    messageElement.textContent = content;
+                }
                 messagesContainer.appendChild(messageElement);
                 return messageElement;
             }
@@ -158,7 +162,7 @@ async function allybox(config) {
             // This function stops the current run of the assistant.
             function stopRun() {
                 if (runId) {
-                    fetch(`${ALLYBOX_BASE_URL}/wp-admin/admin-ajax.php`, {
+                    fetch(`${allyboxBaseUrl}/wp-admin/admin-ajax.php`, {
                         method: 'POST',
                         body: new URLSearchParams({
                             action: 'stop_run',
@@ -258,7 +262,7 @@ async function allybox(config) {
                 resolve(threadEmbedId);
                 getPreviousMessages(threadEmbedId, assistantEmbedId); // Call to get previous messages
             } else {
-                fetch(`${ALLYBOX_BASE_URL}/wp-admin/admin-ajax.php`, {
+                fetch(`${allyboxBaseUrl}/wp-admin/admin-ajax.php`, {
                     method: 'POST',
                     body: new URLSearchParams({
                         action: 'create_new_thread',
@@ -287,7 +291,7 @@ async function allybox(config) {
 
     // This function fetches previous messages for a given threadEmbedId and assistantEmbedId.
     function getPreviousMessages(threadEmbedId, assistantEmbedId) {
-        fetch(`${ALLYBOX_BASE_URL}/wp-admin/admin-ajax.php`, {
+        fetch(`${allyboxBaseUrl}/wp-admin/admin-ajax.php`, {
             method: 'POST',
             body: new URLSearchParams({
                 action: 'get_previous_messages',
