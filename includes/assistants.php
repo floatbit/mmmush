@@ -546,7 +546,7 @@ function handle_user_data_feeds_create() {
             $data_feed_ids[] = $data_feed->ID;
         }
         $data_feed_ids[] = $new_post_id;
-        update_field('data_feeds', $data_feed_ids, $vector_store->ID);
+        update_field('field_6709e0b90fc3d', $data_feed_ids, $vector_store->ID);
 
         // add data feed to vector store
         mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_store_id, $vector_store->ID);
@@ -564,11 +564,29 @@ function mmmush_get_file_ids_from_vector_store($vector_store_id) {
     $files = get_field('files', $vector_store_id);
     $data_feeds = get_field('data_feeds', $vector_store_id);
     $file_ids = [];
-    foreach ($files as $file) {
-        $file_ids[] = get_field('file_id', $file->ID);
+    // Ensure $files is an array before looping
+    if (is_array($files)) {
+        foreach ($files as $file) {
+            // Ensure $file is an object with an ID property
+            if (is_object($file) && isset($file->ID)) {
+                $file_id = get_field('file_id', $file->ID);
+                if ($file_id) {
+                    $file_ids[] = $file_id;
+                }
+            }
+        }
     }
-    foreach ($data_feeds as $data_feed) {
-        $file_ids[] = get_field('file_id', $data_feed->ID);
+    // Ensure $data_feeds is an array before looping
+    if (is_array($data_feeds)) {
+        foreach ($data_feeds as $data_feed) {
+            // Ensure $data_feed is an object with an ID property
+            if (is_object($data_feed) && isset($data_feed->ID)) {
+                $file_id = get_field('file_id', $data_feed->ID);
+                if ($file_id) {
+                    $file_ids[] = $file_id;
+                }
+            }
+        }
     }
     return $file_ids;
 }
@@ -770,12 +788,22 @@ function mmmush_openai_delete_file_from_vector_store($openai_file_id, $assistant
 }
 
 function mmmush_openai_add_file_to_vector_store($openai_file_id, $openai_vector_store_id, $vector_store_id) {
-    $file_ids = mmmush_get_file_ids_from_vector_store($vector_store_id);
-    $file_ids[] = $openai_file_id;
+    // $file_ids = mmmush_get_file_ids_from_vector_store($vector_store_id); // No longer needed
+    // $file_ids[] = $openai_file_id; // No longer needed
     $client = OpenAI::client(CHATGPT_API_KEY);
-    $client->vectorStores()->batches()->create($openai_vector_store_id, [
-        'file_ids' => $file_ids,
-    ]);
+    // Use the correct API method to add a single file to the vector store
+    try {
+        $client->vectorStores()->files()->create($openai_vector_store_id, [
+            'file_id' => $openai_file_id,
+        ]);
+        // Optionally add success flash message here if needed
+    } catch (\Exception $e) {
+        // Log the error or display a user-friendly message
+        error_log("Error adding file {$openai_file_id} to vector store {$openai_vector_store_id}: " . $e->getMessage());
+        mmmush_flash_message('Error adding file to the AI assistant. Details: ' . $e->getMessage(), 'error');
+        // Potentially redirect back with error
+        // Consider if you need to remove the file association in WordPress if the OpenAI call fails
+    }
 }
 
 function handle_user_assistants_edit() {
@@ -831,6 +859,9 @@ function handle_user_assistants_create() {
         $new_post_id = wp_insert_post($post_data);
         $post = get_post($new_post_id);
         
+        // Define instructions before using them
+        $instructions = $description . PHP_EOL . PHP_EOL . MMUSH_FIXED_INSTRUCTIONS;
+
         // create assistant on openai
         $client = OpenAI::client(CHATGPT_API_KEY);
 
@@ -859,11 +890,9 @@ function handle_user_assistants_create() {
         // create vector store on openai
         $assistant_id = get_field('assistant_id', $post->ID);
         $vector_stores = get_field('vector_stores', $post->ID);
-        $instructions = $description . PHP_EOL . PHP_EOL . MMUSH_FIXED_INSTRUCTIONS;
         if ($vector_stores) {
             $vector_store_ids = [];
             $vector_store_ids[] = get_field('vector_store_id', $vector_stores->ID);
-            $client = OpenAI::client(CHATGPT_API_KEY);
             $data  = [
                 'instructions' => $instructions,
                 'name' => $post->post_title,
