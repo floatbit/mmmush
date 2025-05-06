@@ -129,7 +129,14 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         allybox({
-            assistantEmbedId: '<?php print get_field('assistant_embed_id'); ?>'
+            assistantEmbedId: '<?php print get_field('assistant_embed_id'); ?>',
+            initialMessage: 'Hi! How can I help you today?',
+            hideHistory: true,
+            initialTopics: {
+                'Projects': 'Show me your recet projects',
+                'About': 'Tell me about yourself',
+                'Contact': 'How can I contact you?'
+            }
         });
     });
 </script>

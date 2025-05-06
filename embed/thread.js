@@ -6,9 +6,18 @@ const allyboxBaseUrl = new URL(allyboxScriptSrc).origin;
 async function allybox(config) {
     const embedDiv = document.getElementById('allybox-embed');
     const chatContainer = document.getElementById('allybox-chat-container');
+    const hideHistory = config.hideHistory || false; // Get hideHistory from config
+    const initialMessageText = config.initialMessage || config.initialMessageText || null; // Support both naming conventions
+    const initialTopics = config.initialTopics || null;
 
+    // Load marked library
     const markedScript = document.createElement('script');
     markedScript.src = `${allyboxBaseUrl}/embed/marked.min.js`;
+    
+    // Wait for marked script to load
+    const markedLoaded = new Promise((resolve) => {
+        markedScript.onload = resolve;
+    });
     document.head.appendChild(markedScript);
 
     const styleSheet = document.createElement('link');
@@ -19,6 +28,7 @@ async function allybox(config) {
 
     // Sets up the chat interface with a form for user input and a container for displaying messages.
     if (chatContainer) {    
+        await markedLoaded;
         chatContainer.innerHTML = `
         <div id="allybox-chat-messages"></div>
         <div>
@@ -53,12 +63,72 @@ async function allybox(config) {
         let eventSource = null;
         let runId = null;
 
+        // This function adds a message to the chat interface.
+        function addMessage(type, content) {
+            console.log('addMessage', type, content);
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${type}`;
+            if (type === 'assistant' || type === 'initial' || type === 'topics') {
+                if (content) {
+                    if (typeof marked !== 'undefined') {
+                        messageElement.innerHTML = marked.parse(content);
+                    } else {
+                        // Fallback if marked isn't loaded
+                        messageElement.textContent = content;
+                    }
+                } else {
+                    messageElement.innerHTML = '<span class="assistant-loading"></span>';
+                }
+            } else {
+                messageElement.textContent = content;
+            }
+            messagesContainer.appendChild(messageElement);
+            scrollToBottom(); // Make sure to scroll after adding content
+            return messageElement;
+        }
+
+        function addInitialMessage(messageText) {
+            if (messageText) {
+                addMessage('initial', messageText);
+            }
+            if (initialTopics) {
+                const topicLinks = Object.entries(initialTopics).map(([key, value]) => `<a href="#" class="allybox-topic">${key}</a>`).join('');
+                addMessage('topics', `${topicLinks}`);
+
+            }
+        }
+
+        // This function smoothly scrolls to the bottom of the chat messages.
+        function scrollToBottom() {
+            const messagesContainer = document.getElementById('allybox-chat-messages');
+            const targetScrollTop = messagesContainer.scrollHeight;
+            const startScrollTop = messagesContainer.scrollTop;
+            const distance = targetScrollTop - startScrollTop;
+            const duration = 500; // duration in milliseconds
+            let startTime = null;
+
+            function animation(currentTime) {
+                if (!startTime) startTime = currentTime;
+                const timeElapsed = currentTime - startTime;
+                const progress = Math.min(timeElapsed / duration, 1); // Ensure progress does not exceed 1
+                const easeInOutQuad = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; // Easing function
+
+                messagesContainer.scrollTop = startScrollTop + distance * easeInOutQuad;
+
+                if (timeElapsed < duration) {
+                    requestAnimationFrame(animation);
+                }
+            }
+
+            requestAnimationFrame(animation);
+        }
+
         // This function checks if a thread cookie exists for a given assistantEmbedId. 
         // If it does, it resolves with the existing threadEmbedId and fetches previous messages. 
         // If it doesn't, it creates a new thread by sending a POST request to the server, 
         // sets a cookie with the new threadEmbedId, and also fetches previous messages for the new thread.
         try {
-            const threadEmbedId = await checkAndCreateThread(assistantEmbedId);
+            const threadEmbedId = await checkAndCreateThread(assistantEmbedId, hideHistory);
             console.log('Thread Embed ID:', threadEmbedId);
             embedDiv.style.display = 'flex';
 
@@ -125,19 +195,6 @@ async function allybox(config) {
                 eventSource.onerror = () => handleError(eventSource);
             }
 
-            // This function adds a message to the chat interface.
-            function addMessage(type, content) {
-                const messageElement = document.createElement('div');
-                messageElement.className = `message ${type}`;
-                if (type === 'assistant') {
-                    messageElement.innerHTML = '<span class="assistant-loading"></span>';
-                } else {
-                    messageElement.textContent = content;
-                }
-                messagesContainer.appendChild(messageElement);
-                return messageElement;
-            }
-
             // This function toggles the loading state of the submit button.
             function toggleLoading(isLoading) {
                 loadingMessage.classList.toggle('hidden', !isLoading);
@@ -189,31 +246,6 @@ async function allybox(config) {
                 links.forEach(link => link.setAttribute('target', '_blank'));
             }
 
-            // This function smoothly scrolls to the bottom of the chat messages.
-            function scrollToBottom() {
-                const messagesContainer = document.getElementById('allybox-chat-messages');
-                const targetScrollTop = messagesContainer.scrollHeight;
-                const startScrollTop = messagesContainer.scrollTop;
-                const distance = targetScrollTop - startScrollTop;
-                const duration = 500; // duration in milliseconds
-                let startTime = null;
-
-                function animation(currentTime) {
-                    if (!startTime) startTime = currentTime;
-                    const timeElapsed = currentTime - startTime;
-                    const progress = Math.min(timeElapsed / duration, 1); // Ensure progress does not exceed 1
-                    const easeInOutQuad = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; // Easing function
-
-                    messagesContainer.scrollTop = startScrollTop + distance * easeInOutQuad;
-
-                    if (timeElapsed < duration) {
-                        requestAnimationFrame(animation);
-                    }
-                }
-
-                requestAnimationFrame(animation);
-            }
-
             // This function removes source tags from the message content.
             function removeSourceTags(input) {
                 const regex = /【\d+:\d+†source】/g;
@@ -230,7 +262,6 @@ async function allybox(config) {
                 const inputLengthCurrent = document.querySelector('.allybox-input-length-current');
                 inputLengthCurrent.style.width = `${percentage}%`;
             }
-
 
         } catch (error) {
             console.error('Error:', error);
@@ -253,45 +284,53 @@ async function allybox(config) {
     }
 
     // Function to check if the thread cookie exists and create a new thread if it doesn't
-    function checkAndCreateThread(assistantEmbedId) {
-        return new Promise((resolve, reject) => {
+    async function checkAndCreateThread(assistantEmbedId, hideHistory) {
+        return new Promise(async (resolve, reject) => {
             const cookieName = `allybox.threads.${assistantEmbedId}.threadEmbedId`;
             let threadEmbedId = getCookie(cookieName);
 
             if (threadEmbedId) {
                 resolve(threadEmbedId);
-                getPreviousMessages(threadEmbedId, assistantEmbedId); // Call to get previous messages
+                if (!hideHistory) {
+                    await getPreviousMessages(threadEmbedId, assistantEmbedId);
+                }
+                addInitialMessage(initialMessageText);
             } else {
-                fetch(`${allyboxBaseUrl}/wp-admin/admin-ajax.php`, {
-                    method: 'POST',
-                    body: new URLSearchParams({
-                        action: 'create_new_thread',
-                        assistantEmbedId: assistantEmbedId
-                    }),
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
+                try {
+                    const response = await fetch(`${allyboxBaseUrl}/wp-admin/admin-ajax.php`, {
+                        method: 'POST',
+                        body: new URLSearchParams({
+                            action: 'create_new_thread',
+                            assistantEmbedId: assistantEmbedId
+                        }),
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    });
+                
+                    const data = await response.json();
+                
                     if (data.success && data.data.thread_embed_id) {
-                        setCookie(cookieName, data.data.thread_embed_id, 2000); // Cookie expires in 2000 days
-                        resolve(data.data.thread_embed_id);
-                        getPreviousMessages(data.data.thread_embed_id, assistantEmbedId); // Call to get previous messages
+                        const newThreadId = data.data.thread_embed_id;
+                        setCookie(cookieName, newThreadId, 2000);
+                        if (!hideHistory) {
+                            await getPreviousMessages(newThreadId, assistantEmbedId);
+                        }
+                        addInitialMessage(initialMessageText);
+                        resolve(newThreadId);
                     } else {
                         reject(new Error('Failed to create a new thread: ' + data.message));
                     }
-                })
-                .catch(error => {
+                } catch (error) {
                     reject(error);
-                });
+                }
             }
         });
     }
 
     // This function fetches previous messages for a given threadEmbedId and assistantEmbedId.
     function getPreviousMessages(threadEmbedId, assistantEmbedId) {
-        fetch(`${allyboxBaseUrl}/wp-admin/admin-ajax.php`, {
+        return fetch(`${allyboxBaseUrl}/wp-admin/admin-ajax.php`, {
             method: 'POST',
             body: new URLSearchParams({
                 action: 'get_previous_messages',
@@ -304,20 +343,18 @@ async function allybox(config) {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                if (data.data.messages) {
-                    for (const message of data.data.messages) {
-                        const element = addMessage(message.role, '');
-                        let messageText = removeSourceTags(message.content);
-                        if (message.role === 'assistant') {
-                            element.innerHTML = marked.parse(messageText);
-                        } else {
-                            element.textContent = messageText;
-                        }
-                        linksNewWindow(element);
+            if (data.success && data.data.messages) {
+                for (const message of data.data.messages) {
+                    const element = addMessage(message.role, '');
+                    let messageText = removeSourceTags(message.content);
+                    if (message.role === 'assistant') {
+                        element.innerHTML = marked.parse(messageText);
+                    } else {
+                        element.textContent = messageText;
                     }
-                    setTimeout(scrollToBottom, 1000);
+                    linksNewWindow(element);
                 }
+                setTimeout(scrollToBottom, 1000);
             }
         })
         .catch(error => {
