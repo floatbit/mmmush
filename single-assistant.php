@@ -133,9 +133,10 @@
             initialMessage: 'Hi! How can I help you today?',
             hideHistory: true,
             initialTopics: {
-                'Projects': 'Show me your recet projects',
+                'Projects': 'Show me your recent projects',
                 'About': 'Tell me about yourself',
-                'Contact': 'How can I contact you?'
+                'Contact': 'How can I contact you?',
+                'Personal Projects': 'Show me your personal projects'
             }
         });
     });

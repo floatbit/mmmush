@@ -124,6 +124,9 @@
 }
 #allybox-embed .message.topics p {
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 0px;
 }
 #allybox-embed .message.topics a {
     display: inline-block;

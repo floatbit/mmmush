@@ -65,7 +65,6 @@ async function allybox(config) {
 
         // This function adds a message to the chat interface.
         function addMessage(type, content) {
-            console.log('addMessage', type, content);
             const messageElement = document.createElement('div');
             messageElement.className = `message ${type}`;
             if (type === 'assistant' || type === 'initial' || type === 'topics') {
@@ -87,16 +86,25 @@ async function allybox(config) {
             return messageElement;
         }
 
-        function addInitialMessage(messageText) {
-            if (messageText) {
-                addMessage('initial', messageText);
-            }
-            if (initialTopics) {
-                const topicLinks = Object.entries(initialTopics).map(([key, value]) => `<a href="#" class="allybox-topic">${key}</a>`).join('');
-                addMessage('topics', `${topicLinks}`);
+        // function addInitialMessage(messageText) {
+        //     if (messageText) {
+        //         addMessage('initial', messageText);
+        //     }
+        //     if (initialTopics) {
+        //         const topicMessages = Object.entries(initialTopics).map(([key, value]) => `<a href="#" class="allybox-topic" data-topic-message="${value}">${key}</a>`).join('');
+        //         addMessage('topics', `${topicMessages}`);
+        //         const topicLinks = document.querySelectorAll('.allybox-topic');
+        //         topicLinks.forEach(link => {
+        //             link.addEventListener('click', handleTopicClick);
+        //         });
+        //     }
+        // }
 
-            }
-        }
+        // function handleTopicClick(event) {
+        //     const topicMessage = event.target.getAttribute('data-topic-message');
+        //     messageInput.value = topicMessage;
+        //     sendMessage();
+        // }
 
         // This function smoothly scrolls to the bottom of the chat messages.
         function scrollToBottom() {
@@ -156,7 +164,10 @@ async function allybox(config) {
             // Add event listener to the message input
             messageInput.addEventListener('input', updateInputLength);
 
+            // This function stops the current run of the assistant.
             stopMessage.addEventListener('click', stopRun);
+
+            addInitialMessage(initialMessageText);
 
             // This function sends a message to the assistant and displays the response.
             async function sendMessage() {
@@ -263,6 +274,26 @@ async function allybox(config) {
                 inputLengthCurrent.style.width = `${percentage}%`;
             }
 
+            function addInitialMessage(messageText) {
+                if (messageText) {
+                    addMessage('initial', messageText);
+                }
+                if (initialTopics) {
+                    const topicMessages = Object.entries(initialTopics).map(([key, value]) => `<a href="#" class="allybox-topic" data-topic-message="${value}">${key}</a>`).join('');
+                    addMessage('topics', `${topicMessages}`);
+                    const topicLinks = document.querySelectorAll('.allybox-topic');
+                    topicLinks.forEach(link => {
+                        link.addEventListener('click', handleTopicClick);
+                    });
+                }
+            }
+    
+            function handleTopicClick(event) {
+                const topicMessage = event.target.getAttribute('data-topic-message');
+                messageInput.value = topicMessage;
+                sendMessage();
+            }
+
         } catch (error) {
             console.error('Error:', error);
         }
@@ -294,7 +325,7 @@ async function allybox(config) {
                 if (!hideHistory) {
                     await getPreviousMessages(threadEmbedId, assistantEmbedId);
                 }
-                addInitialMessage(initialMessageText);
+                //addInitialMessage(initialMessageText);
             } else {
                 try {
                     const response = await fetch(`${allyboxBaseUrl}/wp-admin/admin-ajax.php`, {
@@ -316,7 +347,7 @@ async function allybox(config) {
                         if (!hideHistory) {
                             await getPreviousMessages(newThreadId, assistantEmbedId);
                         }
-                        addInitialMessage(initialMessageText);
+                        //addInitialMessage(initialMessageText);
                         resolve(newThreadId);
                     } else {
                         reject(new Error('Failed to create a new thread: ' + data.message));
