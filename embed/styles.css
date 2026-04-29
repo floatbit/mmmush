@@ -21,6 +21,7 @@
 #allybox-embed ul {
     font-size: 14px;
     margin: 16px 0 20px;
+    line-height: 1.4;
 }
 #allybox-embed ol {
     list-style-type: decimal;
@@ -31,7 +32,7 @@
     padding-left: 20px;
 }
 #allybox-embed li {
-    margin: 10px 0;
+    margin: 0;
     padding-left: 10px;
 }
 
